@@ -1,9 +1,11 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Language = "fr" | "en";
 
 const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
+// Vidéo du hero : déposez le fichier dans le dossier public/ (hero.mp4)
+const heroVideo = "/hero.mp4";
 // Adresse du formulaire Formspree (ex. https://formspree.io/f/xxxxxxx).
 // À renseigner dans Vercel : Settings > Environment Variables > VITE_FORM_ENDPOINT.
 const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
@@ -13,7 +15,7 @@ const copy = {
     nav: ["Le lieu", "Menus", "Boissons", "Infos"],
     gift: "Offrir un bon cadeau",
     heroEyebrow: "Coffee shop indépendant · Quimper",
-    hero: "Café de spécialité & cuisine maison de saison, au cœur de Quimper",
+    hero: "Café de spécialité & cuisine maison de saison",
     discover: "Découvrir les menus",
     find: "Nous trouver",
     open: "Ouvert",
@@ -151,7 +153,7 @@ const copy = {
     nav: ["The café", "Menus", "Drinks", "Info"],
     gift: "Give a gift card",
     heroEyebrow: "Independent coffee shop · Quimper",
-    hero: "Specialty coffee & seasonal homemade food in the heart of Quimper",
+    hero: "Specialty coffee & seasonal homemade food",
     discover: "Explore our menus",
     find: "Find us",
     open: "Open",
@@ -322,6 +324,7 @@ function App() {
     "idle" | "error" | "sending" | "success" | "mailto" | "failed"
   >("idle");
   const t = copy[language];
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isOpen = useMemo(() => {
     const parts = new Intl.DateTimeFormat("en-GB", {
@@ -343,6 +346,18 @@ function App() {
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    // Respecte le réglage « réduire les animations » : la vidéo reste à l'arrêt
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      video.pause();
+      return;
+    }
+    video.play().catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!modalOpen) return;
@@ -446,32 +461,43 @@ function App() {
 
       <main id="top">
         <section className="hero section-pad">
-          <div className="orb orb-one" />
-          <div className="orb orb-two" />
-          <div className="orb orb-three" />
-          <div className="hero-inner">
+          <video
+            ref={videoRef}
+            className="absolute inset-0 -z-10 h-full w-full object-cover"
+            src={heroVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            controls={false}
+            disablePictureInPicture
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 -z-10 bg-black/45" aria-hidden="true" />
+          <div className="hero-inner" style={{ color: "#fff" }}>
             <div className="status-line">
               <p className="eyebrow">{t.heroEyebrow}</p>
-              <span className={`status ${isOpen ? "open" : ""}`}>
+              <span className={`status ${isOpen ? "open" : ""}`} style={{ color: "#111" }}>
                 <i />
                 {isOpen ? t.open : t.closed}
               </span>
             </div>
-            <h1>{t.hero}</h1>
+            <h1 style={{ maxWidth: 760, textAlign: "left" }}>{t.hero}</h1>
             <div className="hero-actions">
-              <a className="button button-dark" href="#menus">
+              <a className="button button-light" href="#menus">
                 {t.discover}
                 <Arrow />
               </a>
-              <a className="button button-light" href="#infos">
+              <a
+                className="button button-light"
+                href="#infos"
+                style={{ background: "transparent", color: "#fff", borderColor: "#fff" }}
+              >
                 {t.find}
                 <Arrow />
               </a>
             </div>
-          </div>
-          <div className="hero-stamp" aria-hidden="true">
-            <span>GOOD FOOD · GOOD MOOD · </span>
-            <b>B</b>
           </div>
         </section>
 
