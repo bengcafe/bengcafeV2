@@ -6,6 +6,8 @@ const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
 // Vidéo du hero : déposez le fichier dans le dossier public/ (hero.mp4)
 const heroVideo = "/hero.mp4";
+// La vidéo recommence à cette seconde (même si le fichier est plus long)
+const heroLoopSeconds = 30;
 // Adresse du formulaire Formspree (ex. https://formspree.io/f/xxxxxxx).
 // À renseigner dans Vercel : Settings > Environment Variables > VITE_FORM_ENDPOINT.
 const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
@@ -357,6 +359,15 @@ function App() {
       return;
     }
     video.play().catch(() => {});
+
+    // Boucle à 30 secondes : on revient au début dès que la limite est atteinte
+    let frame = 0;
+    const watch = () => {
+      if (video.currentTime >= heroLoopSeconds) video.currentTime = 0;
+      frame = requestAnimationFrame(watch);
+    };
+    frame = requestAnimationFrame(watch);
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -460,10 +471,14 @@ function App() {
       </header>
 
       <main id="top">
-        <section className="hero section-pad">
+        {/* clip-path : la vidéo (fixe) n'est visible que dans le hero et disparaît
+            quand la section suivante défile par-dessus */}
+        <section
+          className="hero section-pad after:hidden"
+          style={{ clipPath: "inset(0)" }}
+        >
           <video
             ref={videoRef}
-            className="absolute inset-0 -z-10 h-full w-full object-cover"
             src={heroVideo}
             autoPlay
             muted
@@ -473,8 +488,27 @@ function App() {
             controls={false}
             disablePictureInPicture
             aria-hidden="true"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100svh",
+              objectFit: "cover",
+              zIndex: -2,
+            }}
           />
-          <div className="absolute inset-0 -z-10 bg-black/45" aria-hidden="true" />
+          {/* Ombre uniquement derrière le texte de gauche */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: -1,
+              background:
+                "linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 35%, rgba(0,0,0,0) 62%)",
+            }}
+          />
           <div className="hero-inner" style={{ color: "#fff" }}>
             <div className="status-line">
               <p className="eyebrow">{t.heroEyebrow}</p>
@@ -483,7 +517,17 @@ function App() {
                 {isOpen ? t.open : t.closed}
               </span>
             </div>
-            <h1 style={{ maxWidth: 760, textAlign: "left" }}>{t.hero}</h1>
+            <h1
+              style={{
+                maxWidth: 460,
+                textAlign: "left",
+                fontSize: "clamp(24px, 2.6vw, 38px)",
+                lineHeight: 1.15,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {t.hero}
+            </h1>
             <div className="hero-actions">
               <a className="button button-light" href="#menus">
                 {t.discover}
