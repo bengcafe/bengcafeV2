@@ -4,6 +4,9 @@ type Language = "fr" | "en";
 
 const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
+// Adresse du formulaire Formspree (ex. https://formspree.io/f/xxxxxxx).
+// À renseigner dans Vercel : Settings > Environment Variables > VITE_FORM_ENDPOINT.
+const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
 
 const copy = {
   fr: {
@@ -15,14 +18,14 @@ const copy = {
     find: "Nous trouver",
     open: "Ouvert",
     closed: "Fermé",
-    placeKicker: "Bienvenue chez Beng",
+    placeKicker: "Le lieu",
     placeTitle: "Un café vivant, doux et généreux",
     placeText:
-      "Beng, c’est une cuisine faite maison, du café choisi avec soin et un lieu coloré où l’on vient prendre son temps. Tout est préparé sur place, au fil des saisons.",
+      "Au Beng Café, on prend le temps. Dans un décor cosy et chaleureux, on vous sert des cafés de spécialité soigneusement sélectionnés, à savourer sans se presser. En cuisine, tout est fait maison, avec des produits frais qui suivent le rythme des saisons : la carte change régulièrement, au gré des marchés et des envies. Que ce soit pour un déjeuner en semaine, un brunch le samedi ou simplement un bon café, poussez la porte : une place vous attend.",
     strengths: [
-      ["Café de spécialité", "Des grains sélectionnés et extraits avec précision."],
-      ["Fait maison", "Une carte courte, cuisinée sur place avec des produits de saison."],
-      ["Pour tous", "Options végétariennes et une équipe à votre écoute."],
+      ["Cafés de spécialité", "Des cafés soigneusement sélectionnés, à savourer sans se presser."],
+      ["Fait maison", "Une cuisine fraîche, préparée avec soin."],
+      ["Produits de saison", "Une carte qui change au fil des saisons et des marchés."],
     ],
     menusKicker: "À table",
     menusTitle: "Du salé, du sucré, du bon",
@@ -33,57 +36,77 @@ const copy = {
     formula: "Formule plat + dessert",
     brunch: "Brunch",
     brunchTime: "Samedi · 10h30 — 14h",
+    brunchNote: "Détail des recettes sur les ardoises",
     brunches: [
-      ["Classique", "18,50 €", ["Salé", "Sucré", "Boisson"]],
-      ["Gourmand", "24,50 €", ["Salé", "Sucré", "Bacon & œufs", "2 boissons"]],
-      ["Kids · −10 ans", "10 €", ["Petit salé", "Pancake ou salade de fruits", "Sirop ou jus"]],
+      ["Brunch Classique", "18,50 €", ["Un salé", "Un sucré", "Une boisson chaude ou froide"]],
+      [
+        "Brunch Gourmand",
+        "24,50 €",
+        ["Un salé", "Un sucré", "Un bacon & œufs", "Une boisson chaude", "Une boisson froide"],
+      ],
+      [
+        "Brunch Kids · −10 ans",
+        "10,00 €",
+        ["Un petit salé", "Un pancake ou une salade de fruits", "Un sirop ou un jus de pomme"],
+      ],
     ],
-    pastries: "Pâtisseries sèches disponibles toute la journée.",
-    counter: "Commande et paiement au comptoir",
+    pastries: "Pâtisseries sèches servies avec vos boissons aux horaires d’ouverture.",
+    counter: "Paiement au comptoir",
     drinksKicker: "À boire",
     drinksTitle: "Bien plus qu’un café",
     drinkGroups: [
       [
-        "Chaudes",
+        "Boissons chaudes",
         [
-          ["Espresso", "2,20 €"],
-          ["Allongé", "2,50 €"],
-          ["Double espresso", "3,80 €"],
-          ["Cappuccino", "4,50 €"],
-          ["Flat white", "4,80 €"],
-          ["Chai latte", "5 €"],
-          ["Thé / infusion", "4,50 €"],
+          ["Espresso", "2,00 €"],
+          ["Double espresso", "3,50 €"],
+          ["Americano", "2,50 €"],
+          ["Filtre", "3,60 €"],
+          ["Latte", "3,90 €"],
+          ["Cappuccino", "3,80 €"],
+          ["Cortado", "4,10 €"],
+          ["Flat white", "4,40 €"],
+          ["Mocaccino", "4,50 €"],
+          ["Chocolat chaud", "4,40 €"],
+          ["Chai latte", "4,50 €"],
+          ["Matcha latte", "5,00 €"],
+          ["Thé ou infusion", "3,80 €"],
         ],
       ],
       [
-        "Froides",
+        "Boissons froides",
         [
-          ["Café glacé", "4,50 €"],
-          ["Chai glacé", "5 €"],
-          ["Citronnade maison", "4,50 €"],
-          ["Jus de pomme bio", "4 €"],
-          ["Kombucha", "5 €"],
+          ["Kombucha", "4,80 €"],
+          ["Limonade passion", "4,20 €"],
+          ["Limonade citron vert", "4,20 €"],
+          ["Limonade orange sanguine", "4,20 €"],
+          ["Thé glacé maison", "3,60 €"],
+          ["Maté pétillant", "4,20 €"],
+          ["Orange pressée", "4,50 €"],
+          ["Jus de pomme", "3,70 €"],
           ["Sirop à l’eau", "2,50 €"],
+          ["Eau plate ou pétillante", "3,00 €"],
+          ["Latte glacé", "3,90 €"],
+          ["Matcha glacé", "5,00 €"],
+          ["Matcha glacé + fraise ou mangue", "6,00 €"],
         ],
       ],
       [
         "Suppléments",
         [
-          ["Lait végétal", "+0,50 €"],
-          ["Shot espresso", "+1 €"],
-          ["Sirop", "+0,50 €"],
-          ["Décaféiné", "+0,30 €"],
+          ["Alternative végétale", "0,70 €"],
+          ["Sirop (caramel, vanille ou noisette)", "0,50 €"],
         ],
       ],
     ],
     giftKicker: "À offrir",
     giftTitle: "Une pause Beng en cadeau",
     giftText:
-      "Pour un brunch, un déjeuner ou une douceur : choisissez le montant, et faites plaisir.",
+      "Pour un brunch, un déjeuner ou un simple café : faites plaisir avec un bon cadeau Beng Café.",
     steps: [
-      ["01", "Choisissez votre montant"],
-      ["02", "Recevez le bon par email"],
-      ["03", "Présentez-le au comptoir"],
+      ["01", "Choisir"],
+      ["02", "Payer en ligne"],
+      ["03", "Offrir"],
     ],
     privatize: "Privatisez le lieu",
     privateText: "Un anniversaire, un atelier ou un événement à imaginer ? Parlons-en.",
@@ -101,7 +124,7 @@ const copy = {
     times: ["11h — 18h", "10h — 18h", "Fermé"],
     mapLabel: "Plan stylisé du centre de Quimper",
     footer: "Beng Café · Fait maison à Quimper",
-    legal: "© 2025 — Tous droits réservés",
+    legal: "© 2026 — Tous droits réservés",
     modalTitle: "Parlez-nous de votre événement",
     modalText: "Donnez-nous quelques détails, nous vous répondrons rapidement.",
     fields: {
@@ -118,6 +141,10 @@ const copy = {
     required: "Merci de remplir les champs obligatoires et de vérifier votre email.",
     successTitle: "Merci, c’est bien reçu !",
     successText: "L’équipe Beng revient vers vous au plus vite.",
+    mailtoTitle: "Plus qu’une étape",
+    mailtoText:
+      "Votre messagerie s’ouvre avec votre demande déjà rédigée : il ne reste qu’à l’envoyer.",
+    failed: "L’envoi a échoué. Réessayez ou écrivez-nous à contact@bengcafe.fr.",
     close: "Fermer",
   },
   en: {
@@ -129,14 +156,14 @@ const copy = {
     find: "Find us",
     open: "Open",
     closed: "Closed",
-    placeKicker: "Welcome to Beng",
+    placeKicker: "The place",
     placeTitle: "A lively, warm and generous café",
     placeText:
-      "Beng is all about homemade food, carefully selected coffee and a colourful place to slow down. Everything is prepared here, following the seasons.",
+      "At Beng Café, we take our time. In a cosy, welcoming space, we serve carefully selected specialty coffee, made to be enjoyed slowly. In the kitchen, everything is homemade, with fresh ingredients that follow the seasons: the menu changes regularly, depending on the markets and our cravings. Whether it’s a weekday lunch, a Saturday brunch or simply a good coffee, come on in: there’s a seat waiting for you.",
     strengths: [
-      ["Specialty coffee", "Carefully sourced beans, brewed with precision."],
-      ["Homemade", "A short menu, cooked here with seasonal produce."],
-      ["For everyone", "Vegetarian options and a team here to help."],
+      ["Specialty coffee", "Carefully selected coffee, made to be enjoyed slowly."],
+      ["Homemade", "Fresh food, prepared with care."],
+      ["Seasonal produce", "A menu that follows the seasons and the markets."],
     ],
     menusKicker: "At the table",
     menusTitle: "Savoury, sweet, all good",
@@ -147,60 +174,76 @@ const copy = {
     formula: "Main + dessert set menu",
     brunch: "Brunch",
     brunchTime: "Saturday · 10:30 am — 2 pm",
+    brunchNote: "See the blackboards for today’s dishes",
     brunches: [
-      ["Classic", "€18.50", ["Savoury plate", "Sweet treat", "Drink"]],
-      ["Generous", "€24.50", ["Savoury plate", "Sweet treat", "Bacon & eggs", "2 drinks"]],
+      ["Classic Brunch", "€18.50", ["A savoury option", "A sweet option", "A hot or cold drink"]],
       [
-        "Kids · under 10",
-        "€10",
-        ["Small savoury plate", "Pancake or fruit salad", "Syrup drink or juice"],
+        "Beng Café’s Brunch",
+        "€24.50",
+        ["A savoury option", "A sweet option", "A bacon & eggs", "A hot drink", "A cold drink"],
+      ],
+      [
+        "Kids Brunch · under 10",
+        "€10.00",
+        ["A small savoury option", "A pancake or a fruit salad", "A syrup or an apple juice"],
       ],
     ],
-    pastries: "Dry pastries available throughout the day.",
-    counter: "Order and pay at the counter",
+    pastries: "Dry pastries served with your drinks during opening hours.",
+    counter: "Payment at the counter",
     drinksKicker: "To drink",
     drinksTitle: "So much more than coffee",
     drinkGroups: [
       [
-        "Hot",
+        "Hot drinks",
         [
-          ["Espresso", "€2.20"],
+          ["Espresso", "€2.00"],
+          ["Double espresso", "€3.50"],
           ["Americano", "€2.50"],
-          ["Double espresso", "€3.80"],
-          ["Cappuccino", "€4.50"],
-          ["Flat white", "€4.80"],
-          ["Chai latte", "€5"],
-          ["Tea / herbal tea", "€4.50"],
+          ["Batch brew", "€3.60"],
+          ["Latte", "€3.90"],
+          ["Cappuccino", "€3.80"],
+          ["Cortado", "€4.10"],
+          ["Flat white", "€4.40"],
+          ["Mocha", "€4.50"],
+          ["Hot chocolate", "€4.40"],
+          ["Chai latte", "€4.50"],
+          ["Matcha latte", "€5.00"],
+          ["Tea or herbal tea", "€3.80"],
         ],
       ],
       [
-        "Cold",
+        "Cold drinks",
         [
-          ["Iced coffee", "€4.50"],
-          ["Iced chai", "€5"],
-          ["Homemade lemonade", "€4.50"],
-          ["Organic apple juice", "€4"],
-          ["Kombucha", "€5"],
-          ["Syrup & water", "€2.50"],
+          ["Kombucha", "€4.80"],
+          ["Passion fruit lemonade", "€4.20"],
+          ["Lime lemonade", "€4.20"],
+          ["Blood orange lemonade", "€4.20"],
+          ["Homemade iced tea", "€3.60"],
+          ["Sparkling maté", "€4.20"],
+          ["Fresh orange juice", "€4.50"],
+          ["Apple juice", "€3.70"],
+          ["Syrup with water", "€2.50"],
+          ["Still or sparkling water", "€3.00"],
+          ["Iced latte", "€3.90"],
+          ["Iced matcha", "€5.00"],
+          ["Iced matcha + strawberry or mango", "€6.00"],
         ],
       ],
       [
         "Extras",
         [
-          ["Plant-based milk", "+€0.50"],
-          ["Espresso shot", "+€1"],
-          ["Syrup", "+€0.50"],
-          ["Decaf", "+€0.30"],
+          ["Plant-based milk", "€0.70"],
+          ["Syrup (caramel, vanilla or hazelnut)", "€0.50"],
         ],
       ],
     ],
     giftKicker: "To give",
     giftTitle: "Give someone a Beng break",
-    giftText: "For brunch, lunch or a sweet treat: choose an amount and make someone’s day.",
+    giftText: "For a brunch, a lunch or a simple coffee: make someone’s day with a Beng Café gift card.",
     steps: [
-      ["01", "Choose your amount"],
-      ["02", "Receive it by email"],
-      ["03", "Show it at the counter"],
+      ["01", "Choose"],
+      ["02", "Pay online"],
+      ["03", "Give"],
     ],
     privatize: "Make Beng yours",
     privateText: "Planning a birthday, workshop or special event? Let’s talk.",
@@ -218,7 +261,7 @@ const copy = {
     times: ["11 am — 6 pm", "10 am — 6 pm", "Closed"],
     mapLabel: "Stylised map of central Quimper",
     footer: "Beng Café · Homemade in Quimper",
-    legal: "© 2025 — All rights reserved",
+    legal: "© 2026 — All rights reserved",
     modalTitle: "Tell us about your event",
     modalText: "Share a few details and we’ll get back to you shortly.",
     fields: {
@@ -235,6 +278,9 @@ const copy = {
     required: "Please complete the required fields and check your email.",
     successTitle: "Thank you, we got it!",
     successText: "The Beng team will get back to you as soon as possible.",
+    mailtoTitle: "One last step",
+    mailtoText: "Your email app is opening with your request already written: just send it.",
+    failed: "Sending failed. Please try again or write to contact@bengcafe.fr.",
     close: "Close",
   },
 };
@@ -245,6 +291,19 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
       {diagonal ? "↗" : "→"}
     </span>
   );
+}
+
+function Logo() {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <>
+        <span>B</span> BENG CAFÉ
+      </>
+    );
+  }
+  // Déposez le fichier logo2.svg dans le dossier public/
+  return <img className="logo-img" src="/logo2.svg" alt="Beng Café" onError={() => setFailed(true)} />;
 }
 
 function GrainPhoto({ number, label }: { number: number; label: string }) {
@@ -259,7 +318,9 @@ function GrainPhoto({ number, label }: { number: number; label: string }) {
 function App() {
   const [language, setLanguage] = useState<Language>("fr");
   const [modalOpen, setModalOpen] = useState(false);
-  const [formState, setFormState] = useState<"idle" | "error" | "sending" | "success">("idle");
+  const [formState, setFormState] = useState<
+    "idle" | "error" | "sending" | "success" | "mailto" | "failed"
+  >("idle");
   const t = copy[language];
 
   const isOpen = useMemo(() => {
@@ -294,7 +355,7 @@ function App() {
     };
   }, [modalOpen]);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -303,8 +364,41 @@ function App() {
       setFormState("error");
       return;
     }
+    // Anti-spam : champ caché que seuls les robots remplissent
+    if (data.get("_gotcha")) {
+      setFormState("success");
+      return;
+    }
+
+    if (!formEndpoint) {
+      // Solution de repli tant que Formspree n'est pas configuré : ouvre la messagerie
+      const body = [
+        `${t.fields.name} : ${data.get("name")}`,
+        `${t.fields.email} : ${email}`,
+        `${t.fields.phone} : ${data.get("phone") || "-"}`,
+        `${t.fields.date} : ${data.get("date")}`,
+        `${t.fields.guests} : ${data.get("guests")}`,
+        "",
+        String(data.get("message") || ""),
+      ].join("\n");
+      window.location.href = `mailto:contact@bengcafe.fr?subject=${encodeURIComponent(
+        `${t.privatize} — ${data.get("name")}`,
+      )}&body=${encodeURIComponent(body)}`;
+      setFormState("mailto");
+      return;
+    }
+
     setFormState("sending");
-    window.setTimeout(() => setFormState("success"), 650);
+    try {
+      const response = await fetch(formEndpoint, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+      setFormState(response.ok ? "success" : "failed");
+    } catch {
+      setFormState("failed");
+    }
   };
 
   const openModal = () => {
@@ -316,7 +410,7 @@ function App() {
     <div className="site-shell">
       <header className="header">
         <a href="#top" className="logo" aria-label="Beng Café, accueil">
-          <span>B</span> BENG CAFÉ
+          <Logo />
         </a>
         <nav className="nav" aria-label="Navigation principale">
           {t.nav.map((item, index) => (
@@ -427,7 +521,11 @@ function App() {
               <span className="mini-label">02</span>
               <h3>{t.brunch}</h3>
             </div>
-            <p className="time">{t.brunchTime}</p>
+            <p className="time">
+              {t.brunchTime}
+              <br />
+              <span className="time-note">{t.brunchNote}</span>
+            </p>
           </div>
           <div className="brunch-grid">
             {t.brunches.map(([title, price, items], index) => (
@@ -610,11 +708,11 @@ function App() {
             >
               ×
             </button>
-            {formState === "success" ? (
+            {formState === "success" || formState === "mailto" ? (
               <div className="success-state">
                 <span>✓</span>
-                <h2 id="modal-title">{t.successTitle}</h2>
-                <p>{t.successText}</p>
+                <h2 id="modal-title">{formState === "mailto" ? t.mailtoTitle : t.successTitle}</h2>
+                <p>{formState === "mailto" ? t.mailtoText : t.successText}</p>
                 <button className="button button-dark" onClick={() => setModalOpen(false)}>
                   {t.close}
                 </button>
@@ -644,6 +742,13 @@ function App() {
                   <label className="wide">
                     {t.fields.message} *<textarea name="message" rows={4} required />
                   </label>
+                  <input
+                    name="_gotcha"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }}
+                  />
                   <label className="consent wide">
                     <input name="consent" type="checkbox" required />
                     <span>{t.consent}</span>
@@ -651,6 +756,11 @@ function App() {
                   {formState === "error" && (
                     <p className="form-error wide" role="alert">
                       {t.required}
+                    </p>
+                  )}
+                  {formState === "failed" && (
+                    <p className="form-error wide" role="alert">
+                      {t.failed}
                     </p>
                   )}
                   <button className="button button-dark wide" disabled={formState === "sending"}>

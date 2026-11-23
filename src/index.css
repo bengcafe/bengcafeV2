@@ -1366,3 +1366,15 @@ h2 {
     box-shadow: none;
   }
 }
+
+/* Logo image et note du brunch */
+.logo-img {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+.time-note {
+  font-weight: 500;
+  font-size: 14px;
+  opacity: 0.8;
+}
