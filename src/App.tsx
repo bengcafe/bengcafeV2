@@ -442,8 +442,13 @@ function App() {
         }
         /* Le hero garde son contenu dans son flux : texte et vidéo sortent ensemble */
         .site-shell .hero-inner {
-          position: relative;
-          transform: translateY(-5vh);
+          position: fixed;
+          top: 50%;
+          left: 0;
+          width: 100%;
+          box-sizing: border-box;
+          transform: translateY(-50%);
+          z-index: 2;
         }
         .site-shell .hero .status-line {
           position: absolute;
@@ -460,7 +465,8 @@ function App() {
             min-height: 100svh;
           }
           .site-shell .hero-inner {
-            transform: translateY(-3vh);
+            top: 50%;
+            transform: translateY(-50%);
           }
           .site-shell .hero .status-line {
             top: 12px;
