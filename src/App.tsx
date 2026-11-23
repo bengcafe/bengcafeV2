@@ -6,10 +6,7 @@ const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
 // Vidéo du hero : déposez le fichier dans le dossier public/ (hero.mp4)
 const heroVideo = "/hero.mp4";
-// La vidéo recommence à cette seconde (même si le fichier est plus long)
 const heroLoopSeconds = 30;
-// Adresse du formulaire Formspree (ex. https://formspree.io/f/xxxxxxx).
-// À renseigner dans Vercel : Settings > Environment Variables > VITE_FORM_ENDPOINT.
 const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
 
 const copy = {
@@ -17,7 +14,7 @@ const copy = {
     nav: ["Le lieu", "Menus", "Boissons", "Infos"],
     gift: "Offrir un bon cadeau",
     heroEyebrow: "Coffee shop indépendant · Quimper",
-    hero: "Café de spécialité & cuisine maison de saison",
+    hero: "Café de spécialité & cuisine de saison",
     discover: "Découvrir les menus",
     find: "Nous trouver",
     open: "Ouvert",
@@ -155,7 +152,7 @@ const copy = {
     nav: ["The café", "Menus", "Drinks", "Info"],
     gift: "Give a gift card",
     heroEyebrow: "Independent coffee shop · Quimper",
-    hero: "Specialty coffee & seasonal homemade food",
+    hero: "Specialty coffee & seasonal cuisine",
     discover: "Explore our menus",
     find: "Find us",
     open: "Open",
@@ -306,7 +303,6 @@ function Logo() {
       </>
     );
   }
-  // Déposez le fichier logo2.svg dans le dossier public/
   return <img className="logo-img" src="/logo2.svg" alt="Beng Café" onError={() => setFailed(true)} />;
 }
 
@@ -353,14 +349,11 @@ function App() {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    // Respecte le réglage « réduire les animations » : la vidéo reste à l'arrêt
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       video.pause();
       return;
     }
     video.play().catch(() => {});
-
-    // Boucle à 30 secondes : on revient au début dès que la limite est atteinte
     let frame = 0;
     const watch = () => {
       if (video.currentTime >= heroLoopSeconds) video.currentTime = 0;
@@ -390,14 +383,11 @@ function App() {
       setFormState("error");
       return;
     }
-    // Anti-spam : champ caché que seuls les robots remplissent
     if (data.get("_gotcha")) {
       setFormState("success");
       return;
     }
-
     if (!formEndpoint) {
-      // Solution de repli tant que Formspree n'est pas configuré : ouvre la messagerie
       const body = [
         `${t.fields.name} : ${data.get("name")}`,
         `${t.fields.email} : ${email}`,
@@ -413,7 +403,6 @@ function App() {
       setFormState("mailto");
       return;
     }
-
     setFormState("sending");
     try {
       const response = await fetch(formEndpoint, {
@@ -434,6 +423,51 @@ function App() {
 
   return (
     <div className="site-shell">
+      <style>{`
+        /* Titres des rubriques : même corps que le titre du hero */
+        .site-shell main > section:not(.hero) h2 {
+          font-size: clamp(24px, 2.6vw, 38px) !important;
+          line-height: 1.15 !important;
+          letter-spacing: -0.02em !important;
+        }
+        /* Chaque rubrique occupe au minimum un écran, sans couper son contenu */
+        .site-shell main > section:not(.hero) {
+          min-height: 100svh;
+          box-sizing: border-box;
+        }
+        .site-shell main > section:not(.hero) {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        /* Le hero garde son contenu dans son flux : texte et vidéo sortent ensemble */
+        .site-shell .hero-inner {
+          position: relative;
+          transform: translateY(-5vh);
+        }
+        .site-shell .hero .status-line {
+          position: absolute;
+          top: clamp(18px, 3vh, 34px);
+          right: clamp(20px, 4vw, 56px);
+          z-index: 3;
+          display: block;
+        }
+        .site-shell .hero .status-line .eyebrow {
+          display: none;
+        }
+        @media (max-width: 700px) {
+          .site-shell main > section:not(.hero) {
+            min-height: 100svh;
+          }
+          .site-shell .hero-inner {
+            transform: translateY(-3vh);
+          }
+          .site-shell .hero .status-line {
+            top: 12px;
+            right: 16px;
+          }
+        }
+      `}</style>
       <header className="header">
         <a href="#top" className="logo" aria-label="Beng Café, accueil">
           <Logo />
@@ -471,12 +505,7 @@ function App() {
       </header>
 
       <main id="top">
-        {/* clip-path : la vidéo (fixe) n'est visible que dans le hero et disparaît
-            quand la section suivante défile par-dessus */}
-        <section
-          className="hero section-pad after:hidden"
-          style={{ clipPath: "inset(0)" }}
-        >
+        <section className="hero section-pad after:hidden" style={{ clipPath: "inset(0)" }}>
           <video
             ref={videoRef}
             src={heroVideo}
@@ -498,7 +527,6 @@ function App() {
               zIndex: -2,
             }}
           />
-          {/* Ombre uniquement derrière le texte de gauche */}
           <div
             aria-hidden="true"
             style={{
