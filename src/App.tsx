@@ -706,17 +706,9 @@ function App() {
           mix-blend-mode: soft-light;
           opacity: 0.5;
         }
-        /* Le lieu : le texte est fixe (comme à la une) et n'est visible que dans la rubrique */
-        .site-shell main > section.place {
-          clip-path: inset(0);
-        }
+        /* Le lieu : le texte est solidaire de la photo et suit son mouvement, vers le bas comme vers le haut */
         .site-shell .place-panel {
-          position: fixed;
-          top: calc(70px + (100svh - 70px) / 2);
-          right: max(40px, calc((100vw - 1280px) / 2));
-          width: min(500px, calc(100vw - 80px));
-          box-sizing: border-box;
-          transform: translateY(-50%);
+          width: min(500px, 100%);
           text-align: left;
         }
         .site-shell .place-panel .eyebrow {
@@ -939,10 +931,7 @@ function App() {
               linear-gradient(0deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.4));
           }
           .site-shell .place-panel {
-            top: calc(111px + (100svh - 111px) / 2);
-            left: 24px;
-            right: 24px;
-            width: auto;
+            width: 100%;
           }
         }
         @media (prefers-reduced-motion: reduce) {
