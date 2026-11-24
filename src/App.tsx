@@ -24,9 +24,9 @@ const copy = {
     open: "Ouvert",
     closed: "Fermé",
     placeKicker: "Le lieu",
-    placeTitle: "Un café vivant, doux et généreux",
+    placeTitle: "Convivial et chaleureux",
     placeText:
-      "Au Beng Café, on prend le temps. Dans un décor cosy et chaleureux, on vous sert des cafés de spécialité soigneusement sélectionnés, à savourer sans se presser. En cuisine, tout est fait maison, avec des produits frais qui suivent le rythme des saisons : la carte change régulièrement, au gré des marchés et des envies. Que ce soit pour un déjeuner en semaine, un brunch le samedi ou simplement un bon café, poussez la porte : une place vous attend.",
+      "Chez Beng, on aime que chacun se sente bien. Le lieu est cosy, l’accueil est simple et le café de spécialité est soigneusement sélectionné. Notre cuisine est fraîche, faite maison, et elle change avec les saisons. Du mardi au vendredi, nous servons le déjeuner. Le samedi, c’est brunch. Le reste du temps, installez-vous avec un café et une pâtisserie.",
     strengths: [
       ["Cafés de spécialité", "Des cafés soigneusement sélectionnés, à savourer sans se presser."],
       ["Fait maison", "Une cuisine fraîche, préparée avec soin."],
@@ -162,9 +162,9 @@ const copy = {
     open: "Open",
     closed: "Closed",
     placeKicker: "The place",
-    placeTitle: "A lively, warm and generous café",
+    placeTitle: "Friendly and welcoming",
     placeText:
-      "At Beng Café, we take our time. In a cosy, welcoming space, we serve carefully selected specialty coffee, made to be enjoyed slowly. In the kitchen, everything is homemade, with fresh ingredients that follow the seasons: the menu changes regularly, depending on the markets and our cravings. Whether it’s a weekday lunch, a Saturday brunch or simply a good coffee, come on in: there’s a seat waiting for you.",
+      "At Beng, we want everyone to feel at ease. The place is cosy, the welcome is simple and the specialty coffee is carefully selected. Our food is fresh and homemade, and it changes with the seasons. From Tuesday to Friday, we serve lunch. On Saturday, it’s brunch. The rest of the time, make yourself comfortable with a coffee and a pastry.",
     strengths: [
       ["Specialty coffee", "Carefully selected coffee, made to be enjoyed slowly."],
       ["Homemade", "Fresh food, prepared with care."],
@@ -709,6 +709,20 @@ function App() {
           mix-blend-mode: soft-light;
           opacity: 0.5;
         }
+        /* Le lieu : la photo est légèrement agrandie depuis la gauche, ce qui rogne un peu son bord droit */
+        .site-shell main > section.place {
+          overflow: hidden;
+        }
+        .site-shell .place-photo {
+          position: absolute;
+          inset: 0;
+          z-index: -2;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          transform: scale(1.06);
+          transform-origin: 0 50%;
+        }
         /* Le lieu : le texte est solidaire de la photo et suit son mouvement, vers le bas comme vers le haut */
         .site-shell .place-panel {
           width: min(500px, 100%);
@@ -1048,26 +1062,16 @@ function App() {
           </div>
         </section>
 
-        <section
-          className="place section-pad"
-          id="lieu"
-          style={{ backgroundImage: `url(${placeImage})` }}
-        >
+        <section className="place section-pad" id="lieu">
+          <div
+            className="place-photo"
+            aria-hidden="true"
+            style={{ backgroundImage: `url(${placeImage})` }}
+          />
           <div className="place-panel">
             <p className="eyebrow">{t.placeKicker}</p>
             <h2>{t.placeTitle}</h2>
             <p className="lead">{t.placeText}</p>
-            <div className="strengths">
-              {t.strengths.map(([title, text], index) => (
-                <article key={title}>
-                  <span>0{index + 1}</span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
           </div>
         </section>
 
