@@ -8,6 +8,8 @@ const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
 const heroVideo = "/hero.mp4";
 // Photo de fond de la rubrique « Le lieu » : déposez le fichier dans public/ (lieu.jpg)
 const placeImage = "/lieu.jpg";
+// Photo de fond de la rubrique « À boire » : déposez le fichier dans public/ (boissons.jpg)
+const drinksImage = "/boissons.jpg";
 const heroLoopSeconds = 30;
 const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
 
@@ -851,6 +853,26 @@ function App() {
             min-height: 0;
           }
         }
+        /* À boire : photo plein fond, voile sombre pour la lisibilité, cartes de prix inchangées */
+        .site-shell main > section.drinks {
+          position: relative;
+          isolation: isolate;
+          background-color: #1d1712;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        .site-shell .drinks::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          background: rgba(0, 0, 0, 0.45);
+        }
+        .site-shell .drinks .section-heading .eyebrow,
+        .site-shell .drinks .section-heading h2 {
+          color: #fff;
+        }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
           padding: 7px 12px;
@@ -1071,7 +1093,11 @@ function App() {
           </div>
         </section>
 
-        <section className="drinks section-pad" id="boissons">
+        <section
+          className="drinks section-pad"
+          id="boissons"
+          style={{ backgroundImage: `url(${drinksImage})` }}
+        >
           <div className="section-heading">
             <p className="eyebrow">{t.drinksKicker}</p>
             <h2>{t.drinksTitle}</h2>
