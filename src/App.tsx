@@ -642,7 +642,12 @@ function App() {
         headers: { Accept: "application/json" },
         body: data,
       });
-      setFormState(response.ok ? "success" : "failed");
+      // FormSubmit répond « success: false » tant que l'adresse n'est pas activée : on n'affiche
+      // « Merci » que si l'envoi est réellement accepté.
+      const result = await response.json().catch(() => null);
+      const accepted =
+        response.ok && (!result || result.success === undefined || String(result.success) === "true");
+      setFormState(accepted ? "success" : "failed");
     } catch {
       setFormState("failed");
     }
