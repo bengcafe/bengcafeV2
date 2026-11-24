@@ -440,37 +440,37 @@ function App() {
           flex-direction: column;
           justify-content: center;
         }
-        /* Le hero garde son contenu dans son flux : texte et vidéo sortent ensemble */
+        /* Texte du hero : fixe avec la vidéo, aligné sur les marges des autres rubriques */
         .site-shell .hero-inner {
           position: fixed;
           top: 50%;
-          left: 0;
-          width: 100%;
+          left: max(40px, calc((100vw - 1280px) / 2));
+          right: max(40px, calc((100vw - 1280px) / 2));
+          width: auto;
           box-sizing: border-box;
           transform: translateY(-50%);
           z-index: 2;
         }
-        .site-shell .hero .status-line {
-          position: absolute;
-          top: clamp(18px, 3vh, 34px);
-          right: clamp(20px, 4vw, 56px);
-          z-index: 3;
-          display: block;
+        /* Badge Ouvert / Fermé dans le bandeau blanc du header */
+        .site-shell .header-status {
+          padding: 7px 12px;
+          white-space: nowrap;
         }
-        .site-shell .hero .status-line .eyebrow {
-          display: none;
-        }
-        @media (max-width: 700px) {
-          .site-shell main > section:not(.hero) {
-            min-height: 100svh;
-          }
+        @media (max-width: 900px) {
           .site-shell .hero-inner {
-            top: 50%;
-            transform: translateY(-50%);
+            left: 24px;
+            right: 24px;
           }
-          .site-shell .hero .status-line {
-            top: 12px;
-            right: 16px;
+        }
+        @media (max-width: 560px) {
+          .site-shell .hero-inner {
+            left: 18px;
+            right: 18px;
+          }
+          .site-shell .header-status {
+            padding: 6px 9px;
+            font-size: 11px;
+            letter-spacing: 0.04em;
           }
         }
       `}</style>
@@ -486,6 +486,10 @@ function App() {
           ))}
         </nav>
         <div className="header-actions">
+          <span className={`status header-status ${isOpen ? "open" : ""}`}>
+            <i />
+            {isOpen ? t.open : t.closed}
+          </span>
           <div className="lang-switch" aria-label="Language">
             {(["fr", "en"] as Language[]).map((lang) => (
               <button
@@ -544,13 +548,6 @@ function App() {
             }}
           />
           <div className="hero-inner" style={{ color: "#fff" }}>
-            <div className="status-line">
-              <p className="eyebrow">{t.heroEyebrow}</p>
-              <span className={`status ${isOpen ? "open" : ""}`} style={{ color: "#111" }}>
-                <i />
-                {isOpen ? t.open : t.closed}
-              </span>
-            </div>
             <h1
               style={{
                 maxWidth: 460,
