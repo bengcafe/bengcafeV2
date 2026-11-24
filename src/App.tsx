@@ -27,6 +27,7 @@ const copy = {
   fr: {
     nav: ["Le lieu", "Boissons", "Menus", "Infos"],
     gift: "Offrir un bon cadeau",
+    giftShort: "Bon cadeau",
     heroEyebrow: "Coffee shop indépendant · Quimper",
     hero: "Café de spécialité\nDéjeuner en semaine\nBrunch le samedi",
     discover: "Découvrir les menus",
@@ -165,6 +166,7 @@ const copy = {
   en: {
     nav: ["The café", "Drinks", "Menus", "Info"],
     gift: "Give a gift card",
+    giftShort: "Gift card",
     heroEyebrow: "Independent coffee shop · Quimper",
     hero: "Specialty coffee\nWeekday lunch\nSaturday brunch",
     discover: "Explore our menus",
@@ -952,6 +954,58 @@ function App() {
         .site-shell .footer-logo:hover {
           transform: translateY(-3px);
         }
+        /* Bandeau : jamais de retour à la ligne dans les liens, taille adaptée à la largeur */
+        .site-shell .nav a,
+        .site-shell .header-gift,
+        .site-shell .header-status,
+        .site-shell .logo {
+          white-space: nowrap;
+        }
+        .site-shell .header .logo,
+        .site-shell .header-actions {
+          flex-shrink: 0;
+        }
+        @media (min-width: 901px) and (max-width: 1240px) {
+          .site-shell .header {
+            padding-left: 20px;
+            padding-right: 20px;
+            gap: 14px;
+            height: 70px;
+            box-sizing: border-box;
+          }
+          .site-shell .header .logo { gap: 8px; }
+          .site-shell .header .logo-mark { height: 42px; }
+          .site-shell .header .logo-name { height: 24px; }
+          .site-shell .nav { gap: 18px; }
+          .site-shell .nav a { font-size: 13px; }
+          .site-shell .header-actions { gap: 8px; }
+          .site-shell .header-status { padding: 6px 10px; font-size: 11px; }
+          .site-shell .lang-switch button { min-width: 34px; min-height: 32px; }
+          .site-shell .header-gift { min-height: 42px; padding: 0 14px; font-size: 13px; gap: 8px; }
+        }
+        @media (min-width: 901px) and (max-width: 1040px) {
+          .site-shell .header-gift .arrow { display: none; }
+          .site-shell .nav { gap: 14px; }
+        }
+        @media (max-width: 900px) {
+          .site-shell .header .logo-mark { height: 40px; }
+          .site-shell .header .logo-name { height: 17px; }
+        }
+        @media (max-width: 420px) {
+          .site-shell .header { gap: 6px; }
+          .site-shell .header .logo { gap: 6px; }
+          .site-shell .header .logo-mark { height: 34px; }
+          .site-shell .header .logo-name { height: 14px; }
+          .site-shell .header-status { padding: 5px 8px; font-size: 10px; gap: 6px; }
+          .site-shell .lang-switch { padding: 2px; }
+          .site-shell .lang-switch button { min-width: 32px; min-height: 30px; font-size: 11px; }
+        }
+        @media (max-width: 340px) {
+          .site-shell .header .logo-mark { height: 30px; }
+          .site-shell .header .logo-name { height: 11px; }
+          .site-shell .header-status { padding: 4px 6px; font-size: 9px; }
+          .site-shell .lang-switch button { min-width: 28px; }
+        }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
           display: grid;
@@ -1092,14 +1146,14 @@ function App() {
             right: 24px;
           }
           .site-shell main > section {
-            scroll-margin-top: 111px;
+            scroll-margin-top: 104px;
           }
           .site-shell main > section:not(.hero) {
-            min-height: calc(100svh - 111px);
+            min-height: calc(100svh - 104px);
           }
 
           .site-shell main > section.place {
-            min-height: calc(100svh - 111px);
+            min-height: calc(100svh - 104px);
             padding: 28px 24px;
             align-items: stretch;
           }
@@ -1128,6 +1182,41 @@ function App() {
             letter-spacing: 0.04em;
           }
         }
+        /* Téléphone : le bouton « Offrir un bon cadeau » reste visible dans le bandeau */
+        .site-shell .gift-short { display: none; }
+        @media (max-width: 900px) {
+          .site-shell .header .header-gift {
+            display: inline-flex;
+            min-height: 40px;
+            padding: 0 14px;
+            font-size: 13px;
+            gap: 8px;
+          }
+          .site-shell .header-actions { gap: 8px; }
+        }
+        @media (max-width: 600px) {
+          .site-shell .header .header-gift { padding: 0 12px; font-size: 12px; }
+          .site-shell .header .header-gift .arrow { display: none; }
+          .site-shell .header-status .status-text { display: none; }
+          .site-shell .header-status { padding: 9px; }
+        }
+        @media (max-width: 420px) {
+          .site-shell .header .header-gift { min-height: 36px; padding: 0 10px; font-size: 11.5px; }
+          .site-shell .header-gift .gift-long { display: none; }
+          .site-shell .header-gift .gift-short { display: inline; }
+        }
+        @media (max-width: 900px) {
+          .site-shell .header {
+            box-sizing: border-box;
+            height: 104px;
+            padding-top: 8px;
+            padding-bottom: 0;
+            align-content: flex-start;
+          }
+        }
+        @media (max-width: 340px) {
+          .site-shell .header-status { display: none; }
+        }
       `}</style>
       <header className="header">
         <a href="#top" className="logo" aria-label="Beng Café, accueil">
@@ -1143,7 +1232,7 @@ function App() {
         <div className="header-actions">
           <span className={`status header-status ${isOpen ? "open" : ""}`}>
             <i />
-            {isOpen ? t.open : t.closed}
+            <span className="status-text">{isOpen ? t.open : t.closed}</span>
           </span>
           <div className="lang-switch" aria-label="Language">
             {(["fr", "en"] as Language[]).map((lang) => (
@@ -1163,7 +1252,8 @@ function App() {
             target="_blank"
             rel="noreferrer"
           >
-            {t.gift}
+            <span className="gift-long">{t.gift}</span>
+            <span className="gift-short">{t.giftShort}</span>
             <Arrow diagonal />
           </a>
         </div>
