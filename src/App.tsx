@@ -50,6 +50,8 @@ const copy = {
     lunchText:
       "Les recettes changent chaque semaine, au fil des saisons et de l’inspiration de la cuisine.",
     formula: "Formule plat + dessert",
+    kidsFormula: "Formule enfant −10 ans",
+    kidsFormulaText: "Pâtes bolognaise ou nuggets purée, une boule de glace, un sirop à l’eau",
     brunch: "Brunch le samedi",
     brunchTime: "Samedi · 10h30 — 14h",
     brunchNote: "Les recettes changent chaque semaine",
@@ -189,6 +191,8 @@ const copy = {
     lunchText:
       "Recipes change every week, with the seasons and our kitchen’s inspiration.",
     formula: "Main + dessert set menu",
+    kidsFormula: "Kids’ set menu · under 10",
+    kidsFormulaText: "Bolognese pasta or nuggets with mash, a scoop of ice cream, a glass of syrup with water",
     brunch: "Saturday brunch",
     brunchTime: "Saturday · 10:30 am — 2 pm",
     brunchNote: "Recipes change every week",
@@ -1006,6 +1010,49 @@ function App() {
           .site-shell .header-status { padding: 4px 6px; font-size: 9px; }
           .site-shell .lang-switch button { min-width: 28px; }
         }
+        /* À table : note unique, midi en semaine à deux formules, ombres identiques sur toutes les cartes */
+        .site-shell .menus-note {
+          margin: 10px auto 0;
+          max-width: 640px;
+          font-size: 15px;
+          line-height: 1.45;
+          opacity: 0.85;
+        }
+        .site-shell .lunch-card {
+          grid-template-columns: 0.75fr 1fr 1.25fr;
+          align-items: center;
+          gap: 20px;
+        }
+        .site-shell .formulas {
+          display: contents;
+        }
+        .site-shell .formulas .formula {
+          padding: 12px 18px;
+          height: 100%;
+          box-sizing: border-box;
+        }
+        .site-shell .formulas .formula span {
+          max-width: 260px;
+        }
+        .site-shell .formula-kids small {
+          display: block;
+          margin-top: 3px;
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1.35;
+          opacity: 0.8;
+        }
+        .site-shell .brunch-card {
+          box-shadow: 5px 5px 0 #111;
+        }
+        .site-shell .brunch-grid {
+          padding-right: 5px;
+          padding-bottom: 5px;
+        }
+        @media (max-width: 900px) {
+          .site-shell .lunch-card { grid-template-columns: 1fr; }
+          .site-shell .formulas { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
           display: grid;
@@ -1363,9 +1410,18 @@ function App() {
               <h3>{t.lunch}</h3>
               <p className="time">{t.lunchTime}</p>
             </div>
-            <div className="formula">
-              <span>{t.formula}</span>
-              <strong>19,50 €</strong>
+            <div className="formulas">
+              <div className="formula">
+                <span>{t.formula}</span>
+                <strong>19,50 €</strong>
+              </div>
+              <div className="formula formula-kids">
+                <span>
+                  {t.kidsFormula}
+                  <small>{t.kidsFormulaText}</small>
+                </span>
+                <strong>10 €</strong>
+              </div>
             </div>
           </div>
           <div className="brunch-head">
