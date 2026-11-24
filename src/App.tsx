@@ -401,10 +401,25 @@ function App() {
       return duration;
     };
 
+    // Effet « rubriques empilées » : en descendant, chaque rubrique reste en place et la suivante
+    // la recouvre ; en remontant, le défilement est normal. Actif seulement si toutes les
+    // rubriques tiennent dans l'écran (sinon une rubrique haute serait coupée).
+    const canStack = () => {
+      if (!desktop.matches) return false;
+      const header = headerHeight();
+      return Array.from(document.querySelectorAll<HTMLElement>("main > section")).every(
+        (section) => section.offsetHeight <= window.innerHeight - header + 2,
+      );
+    };
+    const setStack = (on: boolean) => {
+      root.classList.toggle("stack-down", on && canStack());
+    };
+
     // Renvoie true si le script a pris en charge le mouvement
     const step = (direction: 1 | -1, distance: number): boolean => {
       const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
       if (!sections.length) return false;
+      setStack(direction > 0);
       const header = headerHeight();
       let current = 0;
       sections.forEach((section, index) => {
@@ -484,17 +499,26 @@ function App() {
       const section = id === "top" ? null : document.getElementById(id);
       if (id !== "top" && !section) return;
       event.preventDefault();
+      setStack(false);
       const target = section
         ? section.getBoundingClientRect().top + window.scrollY - headerHeight()
         : 0;
+      setStack(target > window.scrollY);
       if (desktop.matches) lock(animateTo(target) + 80);
       else window.scrollTo({ top: target, behavior: reduce.matches ? "auto" : "smooth" });
     };
 
+    const onResize = () => {
+      if (!canStack()) root.classList.remove("stack-down");
+    };
+    setStack(true);
+    window.addEventListener("resize", onResize);
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     document.addEventListener("click", onClick);
     return () => {
+      window.removeEventListener("resize", onResize);
+      root.classList.remove("stack-down");
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("click", onClick);
@@ -881,6 +905,11 @@ function App() {
         .site-shell .drinks .section-heading .eyebrow,
         .site-shell .drinks .section-heading h2 {
           color: #fff;
+        }
+        /* Rubriques empilées en descendant : chacune reste sous le bandeau, la suivante la recouvre */
+        html.stack-down .site-shell main > section {
+          position: sticky;
+          top: 70px;
         }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
