@@ -660,12 +660,25 @@ function App() {
           position: absolute;
           inset: 0;
           z-index: -1;
-          background: linear-gradient(
-            270deg,
-            rgba(0, 0, 0, 0.6) 0%,
-            rgba(0, 0, 0, 0.38) 38%,
-            rgba(0, 0, 0, 0) 68%
-          );
+          background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0) clamp(70px, 14vh, 140px)),
+            linear-gradient(
+              270deg,
+              rgba(0, 0, 0, 0.6) 0%,
+              rgba(0, 0, 0, 0.38) 38%,
+              rgba(0, 0, 0, 0) 68%
+            );
+        }
+        /* Filtre chaud léger sur la photo */
+        .site-shell .place::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          pointer-events: none;
+          background: rgb(255, 156, 64);
+          mix-blend-mode: soft-light;
+          opacity: 0.5;
         }
         .site-shell .place-panel {
           width: min(500px, 100%);
@@ -704,12 +717,16 @@ function App() {
           line-height: 1.4;
           margin: 0;
         }
-        /* Transition hero -> Le lieu : la rubrique glisse par-dessus la vidéo avec des coins arrondis */
-        .site-shell main > section.place {
-          margin-top: -36px;
-          z-index: 2;
-          overflow: hidden;
-          border-radius: 36px 36px 0 0;
+        /* Séparation hero / Le lieu : voile d'ombre léger en bas du hero et en haut du lieu */
+        .site-shell .hero-shade-bottom {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: clamp(70px, 14vh, 140px);
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(0deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
         }
         /* À table / À boire / En images / Infos : chaque rubrique tient dans un écran (ordinateur) */
         @media (min-width: 901px) {
@@ -857,7 +874,9 @@ function App() {
             align-items: stretch;
           }
           .site-shell .place::before {
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.4));
+            background:
+              linear-gradient(180deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0) 90px),
+              linear-gradient(0deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.4));
           }
           .site-shell .place-panel {
             width: 100%;
@@ -943,6 +962,7 @@ function App() {
               zIndex: -2,
             }}
           />
+          <div className="hero-shade-bottom" aria-hidden="true" />
           <div className="hero-inner" style={{ color: "#fff" }}>
             <h1
               style={{
