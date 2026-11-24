@@ -138,7 +138,7 @@ const copy = {
     days: ["Mardi", "Mercredi — samedi", "Dimanche — lundi"],
     times: ["11h — 18h", "10h — 18h", "Fermé"],
     mapLabel: "Carte Google Maps : Beng Café, Quimper",
-    footer: "Beng Café · Fait maison à Quimper",
+    footer: "Beng Café · Café de spécialité et cuisine maison à Quimper",
     legal: "© 2026 — Tous droits réservés",
     modalTitle: "Parlez-nous de votre événement",
     modalText: "Donnez-nous quelques détails, nous vous répondrons rapidement.",
@@ -275,7 +275,7 @@ const copy = {
     days: ["Tuesday", "Wednesday — Saturday", "Sunday — Monday"],
     times: ["11 am — 6 pm", "10 am — 6 pm", "Closed"],
     mapLabel: "Google Maps: Beng Café, Quimper",
-    footer: "Beng Café · Homemade in Quimper",
+    footer: "Beng Café · Specialty coffee and homemade food in Quimper",
     legal: "© 2026 — All rights reserved",
     modalTitle: "Tell us about your event",
     modalText: "Share a few details and we’ll get back to you shortly.",
@@ -948,6 +948,28 @@ function App() {
           width: auto;
           display: block;
         }
+        /* À table : une seule mention « les recettes changent », ombres identiques sur toutes les cartes */
+        .site-shell .menus-note {
+          margin: 10px auto 0;
+          max-width: 640px;
+          font-size: 15px;
+          line-height: 1.45;
+          opacity: 0.85;
+        }
+        .site-shell .lunch-card {
+          grid-template-columns: 1fr auto;
+          align-items: center;
+        }
+        .site-shell .lunch-card .formula {
+          min-width: 300px;
+        }
+        .site-shell .brunch-card {
+          box-shadow: 5px 5px 0 #111;
+        }
+        .site-shell .brunch-grid {
+          padding-right: 5px;
+          padding-bottom: 5px;
+        }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
           display: grid;
@@ -1261,6 +1283,7 @@ function App() {
           <div className="section-heading centered">
             <p className="eyebrow">{t.menusKicker}</p>
             <h2>{t.menusTitle}</h2>
+            <p className="menus-note">{t.lunchText}</p>
           </div>
           <div className="lunch-card">
             <div>
@@ -1268,7 +1291,6 @@ function App() {
               <h3>{t.lunch}</h3>
               <p className="time">{t.lunchTime}</p>
             </div>
-            <p>{t.lunchText}</p>
             <div className="formula">
               <span>{t.formula}</span>
               <strong>19,50 €</strong>
@@ -1281,8 +1303,6 @@ function App() {
             </div>
             <p className="time">
               {t.brunchTime}
-              <br />
-              <span className="time-note">{t.brunchNote}</span>
             </p>
           </div>
           <div className="brunch-grid">
