@@ -17,7 +17,11 @@ const placeImage = "/lieu.jpg";
 // Photo de fond de la rubrique « À boire » : déposez le fichier dans public/ (boissons.jpg)
 const drinksImage = "/boissons.jpg";
 const heroLoopSeconds = 30;
-const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
+// Par défaut : envoi direct vers contact@bengcafe.fr via FormSubmit (1re demande = mail d'activation à confirmer).
+// Pour utiliser un autre service (Formspree…), définir VITE_FORM_ENDPOINT sur Vercel.
+const formEndpoint =
+  (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) ||
+  "https://formsubmit.co/ajax/contact@bengcafe.fr";
 
 const copy = {
   fr: {
@@ -120,7 +124,7 @@ const copy = {
       ["03", "Offrir"],
     ],
     privatize: "Privatisez le lieu",
-    privateText: "Un anniversaire, un atelier ou un événement à imaginer ? Parlons-en.",
+    privateText: "Un anniversaire, un mariage ou un événement à imaginer ? Parlons-en.",
     write: "Nous écrire",
     galleryKicker: "Instagram",
     galleryTitle: "Suivez-nous sur les réseaux",
@@ -257,7 +261,7 @@ const copy = {
       ["03", "Give"],
     ],
     privatize: "Make Beng yours",
-    privateText: "Planning a birthday, workshop or special event? Let’s talk.",
+    privateText: "Planning a birthday, a wedding or a special event? Let’s talk.",
     write: "Write to us",
     galleryKicker: "Instagram",
     galleryTitle: "Follow us on social media",
@@ -595,6 +599,10 @@ function App() {
       return;
     }
     setFormState("sending");
+    data.append("_subject", `Beng Café — demande de privatisation (${data.get("name")})`);
+    data.append("_replyto", email);
+    data.append("_template", "table");
+    data.append("_captcha", "false");
     try {
       const response = await fetch(formEndpoint, {
         method: "POST",
