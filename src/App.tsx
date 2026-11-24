@@ -574,32 +574,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Téléphone / tablette : rubriques toujours empilées (fixes), défilement naturel au doigt.
-    // Le CSS fait tout ; on ne mesure que la hauteur de chaque rubrique (variable --h) pour que
-    // les rubriques plus hautes que l'écran restent accrochées par leur bas.
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
-    const measure = () =>
-      sections.forEach((section) =>
-        section.style.setProperty("--h", `${section.offsetHeight}px`),
-      );
-    measure();
-    const observer =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    sections.forEach((section) => observer?.observe(section));
-    window.addEventListener("resize", measure);
-    window.addEventListener("orientationchange", measure);
-    window.addEventListener("load", measure);
-    const late = window.setTimeout(measure, 800);
-    return () => {
-      observer?.disconnect();
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("orientationchange", measure);
-      window.removeEventListener("load", measure);
-      window.clearTimeout(late);
-    };
-  }, []);
-
-  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
@@ -1394,14 +1368,6 @@ function App() {
           .site-shell .info-details article:first-child p { padding: 4px 0; font-size: 14px; }
           .site-shell .map-embed { margin-top: 14px; min-height: 200px; height: 200px; }
           .site-shell .map-embed iframe { min-height: 200px; height: 200px; }
-        }
-        /* Téléphone / tablette : toutes les rubriques sont fixes (empilées) pendant le défilement naturel,
-           vers le bas comme vers le haut ; une rubrique plus haute que l'écran reste accrochée par son bas */
-        @media (max-width: 900px) {
-          .site-shell main > section {
-            position: sticky !important;
-            top: min(104px, calc(100svh - var(--h, 0px))) !important;
-          }
         }
       `}</style>
       <header className="header">
