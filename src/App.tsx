@@ -55,6 +55,14 @@ const copy = {
     brunch: "Brunch le samedi",
     brunchTime: "Samedi · 10h30 — 14h",
     brunchNote: "Les recettes changent chaque semaine",
+    lunches: [
+      ["Formule plat + dessert", "19,50 €", ["Un plat", "Un dessert"]],
+      [
+        "Formule enfant · −10 ans",
+        "10,00 €",
+        ["Pâtes bolognaise ou nuggets purée", "Une boule de glace", "Un sirop à l’eau"],
+      ],
+    ],
     brunches: [
       ["Brunch Classique", "18,50 €", ["Un salé", "Un sucré", "Une boisson chaude ou froide"]],
       [
@@ -196,6 +204,14 @@ const copy = {
     brunch: "Saturday brunch",
     brunchTime: "Saturday · 10:30 am — 2 pm",
     brunchNote: "Recipes change every week",
+    lunches: [
+      ["Main + dessert set menu", "€19.50", ["A main course", "A dessert"]],
+      [
+        "Kids’ set menu · under 10",
+        "€10.00",
+        ["Bolognese pasta or nuggets with mash", "A scoop of ice cream", "A syrup with water"],
+      ],
+    ],
     brunches: [
       ["Classic Brunch", "€18.50", ["A savoury option", "A sweet option", "A hot or cold drink"]],
       [
@@ -861,22 +877,23 @@ function App() {
             padding: 12px 16px;
           }
           .site-shell .brunch-head {
-            margin: 2.6vh 0 1.4vh;
+            margin: 1.8vh 0 1vh;
           }
           .site-shell .brunch-card {
             min-height: 0;
-            padding: 18px 22px;
-            gap: 1.6vh;
+            padding: clamp(10px, 1.7vh, 18px) 22px;
+            gap: 0.8vh;
           }
           .site-shell .card-top h4 {
-            font-size: 19px;
+            font-size: 18px;
+            max-width: none;
           }
           .site-shell .brunch-card li {
-            padding: 5px 0;
+            padding: clamp(2px, 0.55vh, 5px) 0;
             font-size: 14px;
           }
           .site-shell .menu-notes {
-            margin-top: 1.8vh;
+            margin-top: 1.2vh;
             font-size: 14px;
           }
 
@@ -1052,6 +1069,30 @@ function App() {
         @media (max-width: 900px) {
           .site-shell .lunch-card { grid-template-columns: 1fr; }
           .site-shell .formulas { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        }
+        .site-shell .lunch-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .site-shell .lunch-head {
+          margin-top: 1.2vh;
+        }
+        .site-shell .menus .section-heading { margin-bottom: 0.6vh; }
+        .site-shell .menus-note { margin-top: 6px; }
+        @media (max-width: 900px) {
+          .site-shell .lunch-grid { grid-template-columns: 1fr; }
+          .site-shell .brunch-card { min-height: 0; gap: 14px; }
+        }
+        @media (min-width: 901px) and (max-height: 800px) {
+          .site-shell .menus { padding-top: 1.5vh; padding-bottom: 1.5vh; }
+          .site-shell .menus h2 { font-size: 26px !important; }
+          .site-shell .menus-note { font-size: 13px; margin-top: 4px; }
+          .site-shell .menus .section-heading .eyebrow { margin-bottom: 4px; }
+          .site-shell .brunch-head h3 { font-size: 20px; }
+          .site-shell .brunch-card { padding: 9px 18px; gap: 4px; }
+          .site-shell .card-top h4 { font-size: 16px; }
+          .site-shell .card-top strong { font-size: 14px; padding: 7px 12px; }
+          .site-shell .brunch-card li { padding: 1px 0; font-size: 13px; }
+          .site-shell .menu-notes { margin-top: 6px; font-size: 13px; }
         }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
@@ -1404,25 +1445,33 @@ function App() {
             <h2>{t.menusTitle}</h2>
             <p className="menus-note">{t.lunchText}</p>
           </div>
-          <div className="lunch-card">
+          <div className="brunch-head lunch-head">
             <div>
               <span className="mini-label">01</span>
               <h3>{t.lunch}</h3>
-              <p className="time">{t.lunchTime}</p>
             </div>
-            <div className="formulas">
-              <div className="formula">
-                <span>{t.formula}</span>
-                <strong>19,50 €</strong>
-              </div>
-              <div className="formula formula-kids">
-                <span>
-                  {t.kidsFormula}
-                  <small>{t.kidsFormulaText}</small>
-                </span>
-                <strong>10 €</strong>
-              </div>
-            </div>
+            <p className="time">{t.lunchTime}</p>
+          </div>
+          <div className="brunch-grid lunch-grid">
+            {t.lunches.map(([title, price, items], index) => (
+              <article
+                className={`brunch-card ${index === 0 ? "card-1" : "card-3"}`}
+                key={title as string}
+              >
+                <div className="card-top">
+                  <h4>{title as string}</h4>
+                  <strong>{price as string}</strong>
+                </div>
+                <ul>
+                  {(items as string[]).map((item) => (
+                    <li key={item}>
+                      <span>✦</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
           </div>
           <div className="brunch-head">
             <div>
