@@ -6,6 +6,8 @@ const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
 // Vidéo du hero : déposez le fichier dans le dossier public/ (hero.mp4)
 const heroVideo = "/hero.mp4";
+// Photo de fond de la rubrique « Le lieu » : déposez le fichier dans public/ (lieu.jpg)
+const placeImage = "/lieu.jpg";
 const heroLoopSeconds = 30;
 const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) || "";
 
@@ -451,6 +453,87 @@ function App() {
           transform: translateY(-50%);
           z-index: 2;
         }
+        /* Header : bandeau blanc opaque, sans transparence, flou ni ombre */
+        .site-shell .header {
+          background: #fffdf7;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          box-shadow: none;
+        }
+        /* Hero : aucun filtre sur la vidéo, seule une ombre légère sur le texte */
+        .site-shell .hero h1,
+        .site-shell .hero .hero-actions .button-light + .button-light {
+          text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+        }
+        /* Ancres : la rubrique s'arrête sous le header collé en haut */
+        .site-shell main > section {
+          scroll-margin-top: 70px;
+        }
+        /* Le lieu : photo plein fond, texte à droite (symétrique du hero), un écran maximum */
+        .site-shell main > section.place {
+          position: relative;
+          isolation: isolate;
+          min-height: calc(100svh - 70px);
+          padding: 4vh max(40px, calc((100vw - 1280px) / 2));
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-end;
+          background-color: #1d1712;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          color: #fff;
+        }
+        .site-shell .place::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          background: linear-gradient(
+            270deg,
+            rgba(0, 0, 0, 0.6) 0%,
+            rgba(0, 0, 0, 0.38) 38%,
+            rgba(0, 0, 0, 0) 68%
+          );
+        }
+        .site-shell .place-panel {
+          width: min(500px, 100%);
+          text-align: left;
+        }
+        .site-shell .place-panel .eyebrow {
+          color: #fff;
+          margin-bottom: 10px;
+        }
+        .site-shell .place-panel h2 {
+          color: #fff;
+          margin: 0 0 clamp(10px, 2vh, 18px);
+        }
+        .site-shell .place-panel .lead {
+          color: #fff;
+          font-size: clamp(14px, 1.15vw, 16px);
+          line-height: 1.55;
+          margin: 0 0 clamp(12px, 2.4vh, 22px);
+        }
+        .site-shell .place-panel .strengths article {
+          border-color: rgba(255, 255, 255, 0.4);
+          padding: clamp(6px, 1.2vh, 11px) 0;
+          gap: 12px;
+        }
+        .site-shell .place-panel .strengths article > span,
+        .site-shell .place-panel .strengths h3 {
+          color: #fff;
+        }
+        .site-shell .place-panel .strengths h3 {
+          font-size: 15px;
+          margin: 0 0 2px;
+        }
+        .site-shell .place-panel .strengths p {
+          color: rgba(255, 255, 255, 0.88);
+          font-size: 13px;
+          line-height: 1.4;
+          margin: 0;
+        }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
           padding: 7px 12px;
@@ -460,6 +543,20 @@ function App() {
           .site-shell .hero-inner {
             left: 24px;
             right: 24px;
+          }
+          .site-shell main > section {
+            scroll-margin-top: 111px;
+          }
+          .site-shell main > section.place {
+            min-height: calc(100svh - 111px);
+            padding: 28px 24px;
+            align-items: stretch;
+          }
+          .site-shell .place::before {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.4));
+          }
+          .site-shell .place-panel {
+            width: 100%;
           }
         }
         @media (max-width: 560px) {
@@ -537,16 +634,6 @@ function App() {
               zIndex: -2,
             }}
           />
-          <div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: -1,
-              background:
-                "linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 35%, rgba(0,0,0,0) 62%)",
-            }}
-          />
           <div className="hero-inner" style={{ color: "#fff" }}>
             <h1
               style={{
@@ -576,26 +663,25 @@ function App() {
           </div>
         </section>
 
-        <section className="place section-pad" id="lieu">
-          <div className="section-heading">
+        <section
+          className="place section-pad"
+          id="lieu"
+          style={{ backgroundImage: `url(${placeImage})` }}
+        >
+          <div className="place-panel">
             <p className="eyebrow">{t.placeKicker}</p>
             <h2>{t.placeTitle}</h2>
-          </div>
-          <div className="place-grid">
-            <GrainPhoto number={1} label="Ambiance colorée du Beng Café" />
-            <div className="place-copy">
-              <p className="lead">{t.placeText}</p>
-              <div className="strengths">
-                {t.strengths.map(([title, text], index) => (
-                  <article key={title}>
-                    <span>0{index + 1}</span>
-                    <div>
-                      <h3>{title}</h3>
-                      <p>{text}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
+            <p className="lead">{t.placeText}</p>
+            <div className="strengths">
+              {t.strengths.map(([title, text], index) => (
+                <article key={title}>
+                  <span>0{index + 1}</span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
