@@ -931,6 +931,9 @@ function App() {
         .site-shell .visit-panel .info-details {
           gap: 2.4vh 32px;
         }
+        .site-shell .visit-panel .info-details article:first-child p:last-child {
+          border-bottom: 0;
+        }
         .site-shell .visit-body {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -1289,10 +1292,6 @@ function App() {
                     <br />
                     29000 Quimper
                   </p>
-                  <a className="button button-dark" href={mapUrl} target="_blank" rel="noreferrer">
-                    {t.route}
-                    <Arrow diagonal />
-                  </a>
                 </article>
                 <article>
                   <h3>{t.contact}</h3>
