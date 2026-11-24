@@ -34,14 +34,14 @@ const copy = {
     ],
     menusKicker: "À table",
     menusTitle: "Du salé, du sucré, du bon",
-    lunch: "Midi",
+    lunch: "Midi en semaine",
     lunchTime: "Mardi — vendredi · 12h — 14h",
     lunchText:
-      "Le menu change chaque semaine, selon l’inspiration de la cuisine et les produits du moment.",
+      "Les recettes changent chaque semaine, au fil des saisons et de l’inspiration de la cuisine.",
     formula: "Formule plat + dessert",
-    brunch: "Brunch",
+    brunch: "Brunch le samedi",
     brunchTime: "Samedi · 10h30 — 14h",
-    brunchNote: "Détail des recettes sur les ardoises",
+    brunchNote: "Les recettes changent chaque semaine",
     brunches: [
       ["Brunch Classique", "18,50 €", ["Un salé", "Un sucré", "Une boisson chaude ou froide"]],
       [
@@ -172,14 +172,14 @@ const copy = {
     ],
     menusKicker: "At the table",
     menusTitle: "Savoury, sweet, all good",
-    lunch: "Lunch",
+    lunch: "Weekday lunch",
     lunchTime: "Tuesday — Friday · 12 pm — 2 pm",
     lunchText:
-      "Our menu changes every week, inspired by our kitchen and the best produce of the moment.",
+      "Recipes change every week, with the seasons and our kitchen’s inspiration.",
     formula: "Main + dessert set menu",
-    brunch: "Brunch",
+    brunch: "Saturday brunch",
     brunchTime: "Saturday · 10:30 am — 2 pm",
-    brunchNote: "See the blackboards for today’s dishes",
+    brunchNote: "Recipes change every week",
     brunches: [
       ["Classic Brunch", "€18.50", ["A savoury option", "A sweet option", "A hot or cold drink"]],
       [
@@ -922,17 +922,17 @@ function App() {
         }
         /* Cartes de boissons : verre dépoli translucide, la photo reste visible derrière */
         .site-shell .drinks .drink-list {
-          -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(8px) brightness(1.45) saturate(1.1);
+          backdrop-filter: blur(8px) brightness(1.45) saturate(1.1);
         }
         .site-shell .drinks .drink-1 {
-          background: color-mix(in srgb, var(--yellow) 68%, transparent);
+          background: color-mix(in srgb, var(--yellow) 44%, transparent);
         }
         .site-shell .drinks .drink-2 {
-          background: color-mix(in srgb, var(--blue) 68%, transparent);
+          background: color-mix(in srgb, var(--blue) 44%, transparent);
         }
         .site-shell .drinks .drink-3 {
-          background: color-mix(in srgb, var(--green) 68%, transparent);
+          background: color-mix(in srgb, var(--green) 44%, transparent);
         }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
@@ -1166,26 +1166,6 @@ function App() {
               <span>→</span>
               {t.counter}
             </p>
-          </div>
-        </section>
-
-        <section className="gift section-pad">
-          <div className="gift-copy">
-            <p className="eyebrow">{t.giftKicker}</p>
-            <h2>{t.giftTitle}</h2>
-            <p className="lead">{t.giftText}</p>
-            <a className="button button-dark" href={giftUrl} target="_blank" rel="noreferrer">
-              {t.gift}
-              <Arrow diagonal />
-            </a>
-          </div>
-          <div className="gift-steps">
-            {t.steps.map(([number, text]) => (
-              <div key={number}>
-                <span>{number}</span>
-                <p>{text}</p>
-              </div>
-            ))}
           </div>
         </section>
 
