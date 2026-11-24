@@ -56,9 +56,9 @@ const copy = {
     brunchTime: "Samedi · 10h30 — 14h",
     brunchNote: "Les recettes changent chaque semaine",
     lunches: [
-      ["Formule plat + dessert", "19,50 €", ["Un plat", "Un dessert"]],
+      ["Formule déjeuner", "19,50 €", ["Un plat", "Un dessert"]],
       [
-        "Formule enfant · −10 ans",
+        "Formule enfant −10 ans",
         "10,00 €",
         ["Pâtes bolognaise ou nuggets purée", "Une boule de glace", "Un sirop à l’eau"],
       ],
@@ -71,7 +71,7 @@ const copy = {
         ["Un salé", "Un sucré", "Un bacon & œufs", "Une boisson chaude", "Une boisson froide"],
       ],
       [
-        "Brunch Kids · −10 ans",
+        "Brunch Kids −10 ans",
         "10,00 €",
         ["Un petit salé", "Un pancake ou une salade de fruits", "Un sirop ou un jus de pomme"],
       ],
@@ -199,15 +199,15 @@ const copy = {
     lunchText:
       "Recipes change every week, with the seasons and our kitchen’s inspiration.",
     formula: "Main + dessert set menu",
-    kidsFormula: "Kids’ set menu · under 10",
+    kidsFormula: "Kids’ set menu under 10",
     kidsFormulaText: "Bolognese pasta or nuggets with mash, a scoop of ice cream, a glass of syrup with water",
     brunch: "Saturday brunch",
     brunchTime: "Saturday · 10:30 am — 2 pm",
     brunchNote: "Recipes change every week",
     lunches: [
-      ["Main + dessert set menu", "€19.50", ["A main course", "A dessert"]],
+      ["Lunch set menu", "€19.50", ["A main course", "A dessert"]],
       [
-        "Kids’ set menu · under 10",
+        "Kids’ set menu under 10",
         "€10.00",
         ["Bolognese pasta or nuggets with mash", "A scoop of ice cream", "A syrup with water"],
       ],
@@ -220,7 +220,7 @@ const copy = {
         ["A savoury option", "A sweet option", "A bacon & eggs", "A hot drink", "A cold drink"],
       ],
       [
-        "Kids Brunch · under 10",
+        "Kids Brunch under 10",
         "€10.00",
         ["A small savoury option", "A pancake or a fruit salad", "A syrup or an apple juice"],
       ],
