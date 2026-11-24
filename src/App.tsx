@@ -709,7 +709,7 @@ function App() {
           mix-blend-mode: soft-light;
           opacity: 0.5;
         }
-        /* Le lieu : la photo est agrandie depuis le coin bas gauche : le bord droit est rogné et le bas de l'image reste visible */
+        /* Le lieu : la photo est agrandie depuis la gauche (bord droit rogné) et remontée un peu pour laisser voir davantage le bas */
         .site-shell main > section.place {
           overflow: hidden;
         }
@@ -718,10 +718,10 @@ function App() {
           inset: 0;
           z-index: -2;
           background-size: cover;
-          background-position: center bottom;
+          background-position: center 64%;
           background-repeat: no-repeat;
-          transform: scale(1.14);
-          transform-origin: 0 100%;
+          transform: scale(1.12);
+          transform-origin: 0 50%;
         }
         /* Le lieu : le texte est solidaire de la photo et suit son mouvement, vers le bas comme vers le haut */
         .site-shell .place-panel {
