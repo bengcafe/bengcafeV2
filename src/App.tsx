@@ -574,6 +574,61 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // Téléphone / tablette : mêmes rubriques « empilées » que sur ordinateur. En descendant, chaque
+    // rubrique reste en place (par son bas si elle est plus haute que l'écran) et la suivante la
+    // recouvre ; en remontant, le défilement est normal. Sans accroche ni défilement automatique.
+    const desktop = window.matchMedia("(min-width: 901px) and (pointer: fine)");
+    const root = document.documentElement;
+    let down = true;
+    let last = window.scrollY;
+    let acc = 0;
+
+    const apply = () => {
+      const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
+      if (desktop.matches) {
+        sections.forEach((section) => section.style.removeProperty("--stick"));
+        return;
+      }
+      const header =
+        document.querySelector<HTMLElement>(".header")?.getBoundingClientRect().height ?? 104;
+      sections.forEach((section) => {
+        const top = Math.min(header, window.innerHeight - section.offsetHeight);
+        section.style.setProperty("--stick", `${Math.round(top)}px`);
+      });
+      root.classList.toggle("stack-down", down);
+    };
+    const onScroll = () => {
+      if (desktop.matches) return;
+      const max = root.scrollHeight - window.innerHeight;
+      const y = window.scrollY;
+      if (y < 0 || y > max) return;
+      const delta = y - last;
+      last = y;
+      if (y <= 1) down = true;
+      if (!delta) return;
+      acc = Math.sign(acc) === Math.sign(delta) ? acc + delta : delta;
+      if (acc > 8 && !down) {
+        down = true;
+        root.classList.add("stack-down");
+      } else if (acc < -8 && down) {
+        down = false;
+        root.classList.remove("stack-down");
+      }
+    };
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", apply);
+    window.addEventListener("orientationchange", apply);
+    const late = window.setTimeout(apply, 600);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", apply);
+      window.removeEventListener("orientationchange", apply);
+      window.clearTimeout(late);
+    };
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
@@ -1196,7 +1251,7 @@ function App() {
         /* Rubriques empilées en descendant : chacune reste sous le bandeau, la suivante la recouvre */
         html.stack-down .site-shell main > section {
           position: sticky;
-          top: 70px;
+          top: var(--stick, 70px);
         }
         /* Cartes de boissons : verre dépoli translucide, la photo reste visible derrière */
         .site-shell .drinks .drink-list {
