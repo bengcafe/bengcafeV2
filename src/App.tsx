@@ -938,37 +938,19 @@ function App() {
           .site-shell .header .logo-mark { height: 40px; }
           .site-shell .header .logo-name { height: 17px; }
         }
-        /* Logo du pied de page : branche de café dans le rond */
+        /* Pied de page : simple flèche vers le haut, sans rond */
         .site-shell .footer-logo {
-          width: 64px;
-          height: 64px;
-        }
-        .site-shell .footer-logo img {
-          height: 68%;
           width: auto;
-          display: block;
+          height: auto;
+          border: 0;
+          border-radius: 0;
+          background: none;
+          color: #fff;
+          padding: 8px;
+          transition: transform 0.2s ease;
         }
-        /* À table : une seule mention « les recettes changent », ombres identiques sur toutes les cartes */
-        .site-shell .menus-note {
-          margin: 10px auto 0;
-          max-width: 640px;
-          font-size: 15px;
-          line-height: 1.45;
-          opacity: 0.85;
-        }
-        .site-shell .lunch-card {
-          grid-template-columns: 1fr auto;
-          align-items: center;
-        }
-        .site-shell .lunch-card .formula {
-          min-width: 300px;
-        }
-        .site-shell .brunch-card {
-          box-shadow: 5px 5px 0 #111;
-        }
-        .site-shell .brunch-grid {
-          padding-right: 5px;
-          padding-bottom: 5px;
+        .site-shell .footer-logo:hover {
+          transform: translateY(-3px);
         }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
@@ -1400,8 +1382,11 @@ function App() {
 
       <footer>
         <p>{t.footer}</p>
-        <a href="#top" className="footer-logo" aria-label="Beng Café, haut de page">
-          <img src="/logo-mark.svg" alt="" aria-hidden="true" />
+        <a href="#top" className="footer-logo" aria-label="Retour en haut">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 20V4" />
+            <path d="M5 11l7-7 7 7" />
+          </svg>
         </a>
         <p>{t.legal}</p>
       </footer>
