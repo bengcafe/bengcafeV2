@@ -1198,19 +1198,24 @@ function App() {
           position: sticky;
           top: var(--stick, 70px);
         }
-        /* Cartes de boissons : verre dépoli translucide, la photo reste visible derrière */
+        /* Cartes de boissons : opaques, avec la même ombre noire décalée que les cartes de « À table » */
         .site-shell .drinks .drink-list {
-          -webkit-backdrop-filter: blur(8px) brightness(1.45) saturate(1.1);
-          backdrop-filter: blur(8px) brightness(1.45) saturate(1.1);
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+          box-shadow: 5px 5px 0 #111;
         }
         .site-shell .drinks .drink-1 {
-          background: color-mix(in srgb, var(--yellow) 44%, transparent);
+          background: var(--yellow);
         }
         .site-shell .drinks .drink-2 {
-          background: color-mix(in srgb, var(--blue) 44%, transparent);
+          background: var(--blue);
         }
         .site-shell .drinks .drink-3 {
-          background: color-mix(in srgb, var(--green) 44%, transparent);
+          background: var(--green);
+        }
+        .site-shell .drinks-grid {
+          padding-right: 5px;
+          padding-bottom: 5px;
         }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
@@ -1368,6 +1373,70 @@ function App() {
           .site-shell .info-details article:first-child p { padding: 4px 0; font-size: 14px; }
           .site-shell .map-embed { margin-top: 14px; min-height: 200px; height: 200px; }
           .site-shell .map-embed iframe { min-height: 200px; height: 200px; }
+        }
+        /* Téléphone : « À boire » et « Infos » s'enchaînent sans grands vides ni traits superflus */
+        @media (max-width: 900px) {
+          .site-shell main > section.drinks {
+            padding: 36px 20px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(100svh - 104px);
+          }
+          .site-shell .drinks .screen,
+          .site-shell .drinks .screen + .screen {
+            min-height: 0;
+            padding: 0;
+            margin: 0;
+            border: 0;
+            justify-content: flex-start;
+            gap: 14px;
+          }
+          .site-shell .drinks .screen + .screen { margin-top: 14px; }
+          .site-shell .drinks .section-heading { margin-bottom: 4px; }
+          .site-shell .drinks .drink-list { padding: 16px 20px; }
+
+          .site-shell main > section.info {
+            padding: 36px 20px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(100svh - 104px);
+          }
+          .site-shell .social-panel,
+          .site-shell .visit-panel {
+            min-height: 0;
+            display: block;
+            padding: 0;
+            margin: 0;
+            border: 0;
+          }
+          .site-shell .social-panel { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+          .site-shell .social-panel .eyebrow,
+          .site-shell .visit-panel .eyebrow { margin: 0 0 8px; }
+          .site-shell .social-panel h2 { margin: 0; }
+          .site-shell .social-panel > .button { margin-top: 4px; }
+          .site-shell .private-block {
+            margin-top: 26px;
+            padding-top: 24px;
+            gap: 12px;
+          }
+          .site-shell .private-text { font-size: 18px; max-width: none; }
+          .site-shell .visit-panel {
+            margin-top: 28px;
+            padding-top: 26px;
+            border-top: var(--line);
+          }
+          .site-shell .visit-panel h2 { margin: 0 0 16px; }
+          .site-shell .visit-body { display: block; }
+          .site-shell .info-details { gap: 12px; }
+          .site-shell .info-details article { padding-top: 10px; }
+          .site-shell .info-details h3 { font-size: 14px; margin-bottom: 4px; letter-spacing: 0.04em; }
+          .site-shell .info-details article:first-child p { padding: 5px 0; font-size: 15px; }
+          .site-shell .info-details p { line-height: 1.5; }
+          .site-shell .info-details article > a:not(.button) { line-height: 1.7; font-size: 16px; }
+          .site-shell .map-embed { margin-top: 18px; height: 220px; min-height: 220px; border-radius: 20px; }
+          .site-shell .map-embed iframe { height: 220px; min-height: 220px; }
         }
       `}</style>
       <header className="header">
