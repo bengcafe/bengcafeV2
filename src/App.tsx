@@ -16,7 +16,7 @@ const copy = {
     nav: ["Le lieu", "Menus", "Boissons", "Infos"],
     gift: "Offrir un bon cadeau",
     heroEyebrow: "Coffee shop indépendant · Quimper",
-    hero: "Café de spécialité & cuisine de saison",
+    hero: "Café de spécialité\nDéjeuner en semaine\nBrunch le samedi",
     discover: "Découvrir les menus",
     find: "Nous trouver",
     open: "Ouvert",
@@ -154,7 +154,7 @@ const copy = {
     nav: ["The café", "Menus", "Drinks", "Info"],
     gift: "Give a gift card",
     heroEyebrow: "Independent coffee shop · Quimper",
-    hero: "Specialty coffee & seasonal cuisine",
+    hero: "Specialty coffee\nWeekday lunch\nSaturday brunch",
     discover: "Explore our menus",
     find: "Find us",
     open: "Open",
@@ -966,11 +966,12 @@ function App() {
           <div className="hero-inner" style={{ color: "#fff" }}>
             <h1
               style={{
-                maxWidth: 460,
+                maxWidth: 560,
                 textAlign: "left",
                 fontSize: "clamp(24px, 2.6vw, 38px)",
                 lineHeight: 1.15,
                 letterSpacing: "-0.02em",
+                whiteSpace: "pre-line",
               }}
             >
               {t.hero}
