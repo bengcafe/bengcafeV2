@@ -348,6 +348,119 @@ function App() {
   }, [language]);
 
   useEffect(() => {
+    // Défilement rubrique par rubrique (ordinateur) : un cran de molette ou une flèche
+    // amène directement à la rubrique suivante ou précédente, comme un clic dans le menu.
+    // Si une rubrique est plus haute que l'écran, on la parcourt d'abord normalement.
+    const desktop = window.matchMedia("(min-width: 901px) and (pointer: fine)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let locked = false;
+    let lockUntil = 0;
+    let quiet = 0;
+
+    const headerHeight = () =>
+      document.querySelector<HTMLElement>(".header")?.getBoundingClientRect().height ?? 70;
+    const lock = (ms: number) => {
+      locked = true;
+      lockUntil = performance.now() + ms;
+      window.clearTimeout(quiet);
+      quiet = window.setTimeout(() => {
+        locked = false;
+      }, Math.max(160, lockUntil - performance.now()));
+    };
+    const rearm = () => {
+      window.clearTimeout(quiet);
+      quiet = window.setTimeout(() => {
+        locked = false;
+      }, Math.max(160, lockUntil - performance.now()));
+    };
+    const goTo = (top: number) =>
+      window.scrollTo({ top: Math.max(0, top), behavior: reduce.matches ? "auto" : "smooth" });
+
+    // Renvoie true si le script a pris en charge le mouvement
+    const step = (direction: 1 | -1, distance: number): boolean => {
+      const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
+      if (!sections.length) return false;
+      const header = headerHeight();
+      let current = 0;
+      sections.forEach((section, index) => {
+        if (section.getBoundingClientRect().top - header <= 2) current = index;
+      });
+      const rect = sections[current].getBoundingClientRect();
+
+      if (direction > 0) {
+        const remaining = rect.bottom - window.innerHeight;
+        if (remaining > 2) {
+          if (distance < remaining) return false;
+          goTo(window.scrollY + remaining);
+          lock(450);
+          return true;
+        }
+        const next = sections[current + 1];
+        const target = next
+          ? next.getBoundingClientRect().top + window.scrollY - header
+          : document.documentElement.scrollHeight - window.innerHeight;
+        if (Math.abs(target - window.scrollY) < 2) return false;
+        goTo(target);
+        lock(750);
+        return true;
+      }
+
+      const above = header - rect.top;
+      if (above > 2) {
+        if (distance < above) return false;
+        goTo(window.scrollY - above);
+        lock(450);
+        return true;
+      }
+      const previous = sections[current - 1];
+      if (!previous) return false;
+      goTo(previous.getBoundingClientRect().top + window.scrollY - header);
+      lock(750);
+      return true;
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (!desktop.matches || event.ctrlKey || event.defaultPrevented) return;
+      if (document.querySelector('[aria-modal="true"]')) return;
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (locked) {
+        event.preventDefault();
+        rearm();
+        return;
+      }
+      const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      if (Math.abs(delta) < 1) return;
+      if (step(delta > 0 ? 1 : -1, Math.abs(delta))) event.preventDefault();
+    };
+
+    const onKey = (event: KeyboardEvent) => {
+      if (!desktop.matches || event.defaultPrevented) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (document.querySelector('[aria-modal="true"]')) return;
+      const target = event.target as HTMLElement | null;
+      if (target && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(target.tagName)) return;
+      let direction: 1 | -1 | 0 = 0;
+      if (event.key === "ArrowDown" || event.key === "PageDown") direction = 1;
+      else if (event.key === "ArrowUp" || event.key === "PageUp") direction = -1;
+      else if (event.key === " ") direction = event.shiftKey ? -1 : 1;
+      if (!direction) return;
+      if (locked) {
+        event.preventDefault();
+        return;
+      }
+      if (step(direction, window.innerHeight * 0.85)) event.preventDefault();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.clearTimeout(quiet);
+    };
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
@@ -434,7 +547,7 @@ function App() {
         }
         /* Chaque rubrique occupe au minimum un écran, sans couper son contenu */
         .site-shell main > section:not(.hero) {
-          min-height: 100svh;
+          min-height: calc(100svh - 70px);
           box-sizing: border-box;
         }
         .site-shell main > section:not(.hero) {
@@ -468,6 +581,22 @@ function App() {
         /* Ancres : la rubrique s'arrête sous le header collé en haut */
         .site-shell main > section {
           scroll-margin-top: 70px;
+        }
+        /* Défilement rubrique par rubrique : sur ordinateur il est piloté par le script
+           (molette, clavier) ; sur tactile, simple accroche douce de chaque rubrique */
+        html {
+          scroll-behavior: smooth;
+        }
+        @media (max-width: 900px), (pointer: coarse) {
+          html {
+            scroll-snap-type: y proximity;
+          }
+          .site-shell main > section {
+            scroll-snap-align: start;
+          }
+          .site-shell footer {
+            scroll-snap-align: end;
+          }
         }
         /* Le lieu : photo plein fond, texte à droite (symétrique du hero), un écran maximum */
         .site-shell main > section.place {
@@ -547,6 +676,10 @@ function App() {
           .site-shell main > section {
             scroll-margin-top: 111px;
           }
+          .site-shell main > section:not(.hero) {
+            min-height: calc(100svh - 111px);
+          }
+
           .site-shell main > section.place {
             min-height: calc(100svh - 111px);
             padding: 28px 24px;
@@ -557,6 +690,11 @@ function App() {
           }
           .site-shell .place-panel {
             width: 100%;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          html {
+            scroll-behavior: auto;
           }
         }
         @media (max-width: 560px) {
