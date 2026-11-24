@@ -930,13 +930,23 @@ function App() {
           display: block;
         }
         .site-shell .header .logo-name {
-          height: 20px;
+          height: 34px;
           width: auto;
           display: block;
         }
         @media (max-width: 560px) {
           .site-shell .header .logo-mark { height: 40px; }
-          .site-shell .header .logo-name { height: 15px; }
+          .site-shell .header .logo-name { height: 17px; }
+        }
+        /* Logo du pied de page : branche de café dans le rond */
+        .site-shell .footer-logo {
+          width: 64px;
+          height: 64px;
+        }
+        .site-shell .footer-logo img {
+          height: 68%;
+          width: auto;
+          display: block;
         }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
@@ -1353,8 +1363,8 @@ function App() {
 
       <footer>
         <p>{t.footer}</p>
-        <a href="#top" className="footer-logo">
-          B
+        <a href="#top" className="footer-logo" aria-label="Beng Café, haut de page">
+          <img src="/logo-mark.svg" alt="" aria-hidden="true" />
         </a>
         <p>{t.legal}</p>
       </footer>
