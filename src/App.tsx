@@ -353,28 +353,51 @@ function App() {
     // Si une rubrique est plus haute que l'écran, on la parcourt d'abord normalement.
     const desktop = window.matchMedia("(min-width: 901px) and (pointer: fine)");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const root = document.documentElement;
     let locked = false;
     let lockUntil = 0;
     let quiet = 0;
+    let frame = 0;
 
     const headerHeight = () =>
       document.querySelector<HTMLElement>(".header")?.getBoundingClientRect().height ?? 70;
+    const arm = () => {
+      window.clearTimeout(quiet);
+      quiet = window.setTimeout(() => {
+        locked = false;
+      }, Math.max(160, lockUntil - performance.now()));
+    };
     const lock = (ms: number) => {
       locked = true;
       lockUntil = performance.now() + ms;
-      window.clearTimeout(quiet);
-      quiet = window.setTimeout(() => {
-        locked = false;
-      }, Math.max(160, lockUntil - performance.now()));
+      arm();
     };
-    const rearm = () => {
-      window.clearTimeout(quiet);
-      quiet = window.setTimeout(() => {
-        locked = false;
-      }, Math.max(160, lockUntil - performance.now()));
+
+    // Animation de défilement : durée d'environ 0,9 s pour passer d'une rubrique à la suivante
+    const animateTo = (target: number): number => {
+      const start = window.scrollY;
+      const end = Math.min(Math.max(0, target), root.scrollHeight - window.innerHeight);
+      const distance = Math.abs(end - start);
+      if (distance < 1) return 0;
+      window.cancelAnimationFrame(frame);
+      root.style.scrollBehavior = "auto";
+      if (reduce.matches) {
+        window.scrollTo(0, end);
+        root.style.scrollBehavior = "";
+        return 0;
+      }
+      const duration = Math.min(1200, 380 + distance * 0.62);
+      const began = performance.now();
+      const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - began) / duration);
+        window.scrollTo(0, start + (end - start) * ease(progress));
+        if (progress < 1) frame = window.requestAnimationFrame(tick);
+        else root.style.scrollBehavior = "";
+      };
+      frame = window.requestAnimationFrame(tick);
+      return duration;
     };
-    const goTo = (top: number) =>
-      window.scrollTo({ top: Math.max(0, top), behavior: reduce.matches ? "auto" : "smooth" });
 
     // Renvoie true si le script a pris en charge le mouvement
     const step = (direction: 1 | -1, distance: number): boolean => {
@@ -391,31 +414,27 @@ function App() {
         const remaining = rect.bottom - window.innerHeight;
         if (remaining > 2) {
           if (distance < remaining) return false;
-          goTo(window.scrollY + remaining);
-          lock(450);
+          lock(animateTo(window.scrollY + remaining) + 80);
           return true;
         }
         const next = sections[current + 1];
         const target = next
           ? next.getBoundingClientRect().top + window.scrollY - header
-          : document.documentElement.scrollHeight - window.innerHeight;
+          : root.scrollHeight - window.innerHeight;
         if (Math.abs(target - window.scrollY) < 2) return false;
-        goTo(target);
-        lock(750);
+        lock(animateTo(target) + 80);
         return true;
       }
 
       const above = header - rect.top;
       if (above > 2) {
         if (distance < above) return false;
-        goTo(window.scrollY - above);
-        lock(450);
+        lock(animateTo(window.scrollY - above) + 80);
         return true;
       }
       const previous = sections[current - 1];
       if (!previous) return false;
-      goTo(previous.getBoundingClientRect().top + window.scrollY - header);
-      lock(750);
+      lock(animateTo(previous.getBoundingClientRect().top + window.scrollY - header) + 80);
       return true;
     };
 
@@ -425,7 +444,7 @@ function App() {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       if (locked) {
         event.preventDefault();
-        rearm();
+        arm();
         return;
       }
       const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
@@ -451,12 +470,34 @@ function App() {
       if (step(direction, window.innerHeight * 0.85)) event.preventDefault();
     };
 
+    // Liens d'ancre (menu, logo, boutons) : même mouvement, et le logo ramène tout en haut
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as HTMLElement | null)?.closest<HTMLAnchorElement>(
+        'a[href^="#"]',
+      );
+      const id = anchor?.getAttribute("href")?.slice(1);
+      if (!anchor || !id) return;
+      const section = id === "top" ? null : document.getElementById(id);
+      if (id !== "top" && !section) return;
+      event.preventDefault();
+      const target = section
+        ? section.getBoundingClientRect().top + window.scrollY - headerHeight()
+        : 0;
+      if (desktop.matches) lock(animateTo(target) + 80);
+      else window.scrollTo({ top: target, behavior: reduce.matches ? "auto" : "smooth" });
+    };
+
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
+    document.addEventListener("click", onClick);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onClick);
       window.clearTimeout(quiet);
+      window.cancelAnimationFrame(frame);
     };
   }, []);
 
@@ -662,6 +703,136 @@ function App() {
           font-size: 13px;
           line-height: 1.4;
           margin: 0;
+        }
+        /* Transition hero -> Le lieu : la rubrique glisse par-dessus la vidéo avec des coins arrondis */
+        .site-shell main > section.place {
+          margin-top: -36px;
+          z-index: 2;
+          overflow: hidden;
+          border-radius: 36px 36px 0 0;
+        }
+        /* À table / À boire / En images / Infos : chaque rubrique tient dans un écran (ordinateur) */
+        @media (min-width: 901px) {
+          .site-shell .menus,
+          .site-shell .drinks,
+          .site-shell .gallery,
+          .site-shell .info {
+            padding-top: 3vh;
+            padding-bottom: 3vh;
+          }
+          .site-shell .menus .section-heading,
+          .site-shell .drinks .section-heading,
+          .site-shell .gallery .section-heading,
+          .site-shell .info .section-heading {
+            margin-bottom: clamp(12px, 2.4vh, 26px);
+          }
+          .site-shell .menus .section-heading .eyebrow,
+          .site-shell .drinks .section-heading .eyebrow,
+          .site-shell .gallery .section-heading .eyebrow,
+          .site-shell .info .section-heading .eyebrow {
+            margin-bottom: 8px;
+          }
+
+          /* Bon cadeau : retour sur deux colonnes (texte à gauche, étapes à droite) */
+          .site-shell main > section.gift {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 8%;
+            align-items: center;
+            padding-top: 3vh;
+            padding-bottom: 3vh;
+          }
+          .site-shell .gift-copy .lead {
+            margin: 2.4vh 0;
+          }
+          .site-shell .gift-steps div {
+            min-height: 0;
+            padding: 2.4vh 26px;
+          }
+
+          /* À table */
+          .site-shell .lunch-card {
+            padding: 2vh 28px;
+            gap: 32px;
+            box-shadow: 5px 5px 0 #111;
+          }
+          .site-shell .lunch-card > p {
+            font-size: 15px;
+            line-height: 1.45;
+          }
+          .site-shell .lunch-card h3,
+          .site-shell .brunch-head h3 {
+            font-size: 24px;
+            margin-top: 4px;
+          }
+          .site-shell .formula {
+            padding: 12px 16px;
+          }
+          .site-shell .brunch-head {
+            margin: 2.6vh 0 1.4vh;
+          }
+          .site-shell .brunch-card {
+            min-height: 0;
+            padding: 18px 22px;
+            gap: 1.6vh;
+          }
+          .site-shell .card-top h4 {
+            font-size: 19px;
+          }
+          .site-shell .brunch-card li {
+            padding: 5px 0;
+            font-size: 14px;
+          }
+          .site-shell .menu-notes {
+            margin-top: 1.8vh;
+            font-size: 14px;
+          }
+
+          /* À boire */
+          .site-shell .drink-list {
+            padding: 20px 24px;
+          }
+          .site-shell .drink-list h3 {
+            font-size: 20px;
+            margin-bottom: 1.2vh;
+          }
+          .site-shell .price-row {
+            padding: 0.5vh 0;
+            font-size: 14px;
+          }
+
+          /* En images : la grille remplit exactement la place restante */
+          .site-shell .gallery {
+            height: calc(100svh - 70px);
+          }
+          .site-shell .gallery-grid {
+            flex: 1;
+            min-height: 0;
+            grid-template-rows: 1fr 1fr;
+          }
+          .site-shell .gallery-grid .grain-photo:nth-child(2),
+          .site-shell .gallery-grid .grain-photo:nth-child(5) {
+            transform: none;
+          }
+
+          /* Infos */
+          .site-shell .info-details {
+            gap: 2.4vh 32px;
+          }
+          .site-shell .info-details h3 {
+            margin-bottom: 1.2vh;
+            font-size: 16px;
+          }
+          .site-shell .info-details article:first-child p {
+            padding: 0.7vh 0;
+            font-size: 14px;
+          }
+          .site-shell .info-details .button {
+            margin-top: 1.6vh;
+          }
+          .site-shell .map-card {
+            min-height: 0;
+          }
         }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
