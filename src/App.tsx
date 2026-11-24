@@ -317,7 +317,18 @@ function Logo() {
       </>
     );
   }
-  return <img className="logo-img" src="/logo2.svg" alt="Beng Café" onError={() => setFailed(true)} />;
+  return (
+    <>
+      <img
+        className="logo-mark"
+        src="/logo-mark.svg"
+        alt=""
+        aria-hidden="true"
+        onError={() => setFailed(true)}
+      />
+      <img className="logo-name" src="/logo-name.svg" alt="Beng Café" onError={() => setFailed(true)} />
+    </>
+  );
 }
 
 function GrainPhoto({ number, label }: { number: number; label: string }) {
@@ -908,6 +919,24 @@ function App() {
           .site-shell .map-card {
             min-height: 0;
           }
+        }
+        /* Logo du bandeau : branche de café + nom */
+        .site-shell .header .logo {
+          gap: 12px;
+        }
+        .site-shell .header .logo-mark {
+          height: 54px;
+          width: auto;
+          display: block;
+        }
+        .site-shell .header .logo-name {
+          height: 20px;
+          width: auto;
+          display: block;
+        }
+        @media (max-width: 560px) {
+          .site-shell .header .logo-mark { height: 40px; }
+          .site-shell .header .logo-name { height: 15px; }
         }
         /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
         .site-shell .info-split {
