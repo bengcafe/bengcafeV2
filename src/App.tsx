@@ -116,8 +116,8 @@ const copy = {
     privatize: "Privatisez le lieu",
     privateText: "Un anniversaire, un atelier ou un événement à imaginer ? Parlons-en.",
     write: "Nous écrire",
-    galleryKicker: "En images",
-    galleryTitle: "Un peu de Beng dans votre feed",
+    galleryKicker: "Instagram",
+    galleryTitle: "Suivez-nous sur les réseaux",
     instagram: "Suivre @beng.cafe.quimper",
     infoKicker: "Venir chez Beng",
     infoTitle: "On vous attend",
@@ -253,8 +253,8 @@ const copy = {
     privatize: "Make Beng yours",
     privateText: "Planning a birthday, workshop or special event? Let’s talk.",
     write: "Write to us",
-    galleryKicker: "In pictures",
-    galleryTitle: "A little Beng in your feed",
+    galleryKicker: "Instagram",
+    galleryTitle: "Follow us on social media",
     instagram: "Follow @beng.cafe.quimper",
     infoKicker: "Visit Beng",
     infoTitle: "Come say hello",
@@ -895,6 +895,49 @@ function App() {
             min-height: 0;
           }
         }
+        /* Réseaux + Venir chez Beng : une seule rubrique, deux colonnes */
+        .site-shell .info-split {
+          display: grid;
+          grid-template-columns: 0.8fr 1.2fr;
+          gap: 6%;
+          align-items: center;
+          min-height: calc(100svh - 70px - 6vh);
+        }
+        .site-shell .social-panel {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 28px;
+          padding-right: 4%;
+          border-right: var(--line);
+        }
+        .site-shell .social-panel h2,
+        .site-shell .visit-panel h2 {
+          margin: 0;
+        }
+        .site-shell .visit-panel .eyebrow,
+        .site-shell .social-panel .eyebrow {
+          margin-bottom: 0;
+        }
+        .site-shell .visit-panel h2 {
+          margin-bottom: clamp(14px, 3vh, 30px);
+        }
+        .site-shell .visit-panel .info-details {
+          gap: 2.4vh 32px;
+        }
+        @media (max-width: 900px) {
+          .site-shell .info-split {
+            grid-template-columns: 1fr;
+            gap: 44px;
+            min-height: 0;
+          }
+          .site-shell .social-panel {
+            border-right: 0;
+            padding-right: 0;
+            padding-bottom: 36px;
+            border-bottom: var(--line);
+          }
+        }
         /* À boire : photo plein fond, voile sombre pour la lisibilité, cartes de prix inchangées */
         .site-shell main > section.drinks {
           position: relative;
@@ -1180,82 +1223,53 @@ function App() {
           </button>
         </section>
 
-        <section className="gallery section-pad">
-          <div className="section-heading gallery-head">
-            <div>
+        <section className="info section-pad" id="infos">
+          <div className="info-split">
+            <div className="social-panel">
               <p className="eyebrow">{t.galleryKicker}</p>
               <h2>{t.galleryTitle}</h2>
+              <a
+                className="button button-dark"
+                href="https://www.instagram.com/beng.cafe.quimper/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t.instagram}
+                <Arrow diagonal />
+              </a>
             </div>
-            <a
-              className="button button-light"
-              href="https://www.instagram.com/beng.cafe.quimper/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t.instagram}
-              <Arrow diagonal />
-            </a>
-          </div>
-          <div className="gallery-grid">
-            {[2, 3, 4, 5, 6, 7].map((number) => (
-              <GrainPhoto
-                key={number}
-                number={number}
-                label={`Beng Café — galerie ${number - 1}`}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="info section-pad" id="infos">
-          <div className="section-heading">
-            <p className="eyebrow">{t.infoKicker}</p>
-            <h2>{t.infoTitle}</h2>
-          </div>
-          <div className="info-grid">
-            <div className="info-details">
-              <article>
-                <h3>{t.hours}</h3>
-                {t.days.map((day, i) => (
-                  <p key={day}>
-                    <span>{day}</span>
-                    <strong>{t.times[i]}</strong>
+            <div className="visit-panel">
+              <p className="eyebrow">{t.infoKicker}</p>
+              <h2>{t.infoTitle}</h2>
+              <div className="info-details">
+                <article>
+                  <h3>{t.hours}</h3>
+                  {t.days.map((day, i) => (
+                    <p key={day}>
+                      <span>{day}</span>
+                      <strong>{t.times[i]}</strong>
+                    </p>
+                  ))}
+                </article>
+                <article>
+                  <h3>{t.address}</h3>
+                  <p>
+                    24 rue du Frout
+                    <br />
+                    29000 Quimper
                   </p>
-                ))}
-              </article>
-              <article>
-                <h3>{t.address}</h3>
-                <p>
-                  24 rue du Frout
-                  <br />
-                  29000 Quimper
-                </p>
-                <a className="button button-dark" href={mapUrl} target="_blank" rel="noreferrer">
-                  {t.route}
-                  <Arrow diagonal />
-                </a>
-              </article>
-              <article>
-                <h3>{t.contact}</h3>
-                <a href="tel:+33256041281">02 56 04 12 81</a>
-                <a href="mailto:contact@bengcafe.fr">contact@bengcafe.fr</a>
-              </article>
-            </div>
-            <a
-              className="map-card"
-              href={mapUrl}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={t.mapLabel}
-            >
-              <div className="map-lines" />
-              <span className="map-river">ODET</span>
-              <div className="map-pin">
-                <b>B</b>
-                <i />
+                  <a className="button button-dark" href={mapUrl} target="_blank" rel="noreferrer">
+                    {t.route}
+                    <Arrow diagonal />
+                  </a>
+                </article>
+                <article>
+                  <h3>{t.contact}</h3>
+                  <a href="tel:+33256041281">02 56 04 12 81</a>
+                  <a href="mailto:contact@bengcafe.fr">contact@bengcafe.fr</a>
+                </article>
               </div>
-              <p>24 rue du Frout</p>
-            </a>
+            </div>
           </div>
         </section>
       </main>
