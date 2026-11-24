@@ -704,17 +704,6 @@ function App() {
         html {
           scroll-behavior: smooth;
         }
-        @media (max-width: 900px), (pointer: coarse) {
-          html {
-            scroll-snap-type: y proximity;
-          }
-          .site-shell main > section {
-            scroll-snap-align: start;
-          }
-          .site-shell footer {
-            scroll-snap-align: end;
-          }
-        }
         /* Le lieu : photo plein fond, texte à droite (symétrique du hero), un écran maximum */
         .site-shell main > section.place {
           position: relative;
@@ -1305,6 +1294,81 @@ function App() {
         @media (max-width: 340px) {
           .site-shell .header-status { display: none; }
         }
+        /* ===== Téléphone / tablette : chaque partie occupe un écran complet, sans accroche automatique ===== */
+        .site-shell .screen { display: contents; }
+        .site-shell .drinks-grid > .screen > .section-heading { grid-column: 1 / -1; }
+        @media (max-width: 900px) {
+          html { scroll-snap-type: none !important; }
+          .site-shell main > section { scroll-snap-align: none !important; }
+          .site-shell main > section.hero { min-height: calc(100svh - 104px); }
+
+          /* Écrans pleins */
+          .site-shell main > section.menus,
+          .site-shell main > section.info {
+            padding: 0 20px;
+            min-height: 0;
+            display: block;
+          }
+          .site-shell .screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(100svh - 104px);
+            padding: 20px 0;
+            box-sizing: border-box;
+          }
+          .site-shell .screen + .screen { border-top: var(--line); margin: 0 -20px; padding: 20px; }
+          .site-shell .menus .section-heading { margin-bottom: 14px; }
+          .site-shell .menus .section-heading h2 { font-size: 26px !important; }
+          .site-shell .menus-note { font-size: 14px; margin-top: 6px; }
+          .site-shell .brunch-head { margin: 14px 0 10px; align-items: flex-start; flex-direction: column; gap: 4px; }
+          .site-shell .brunch-head h3 { font-size: 24px; margin-top: 2px; }
+          .site-shell .brunch-head .time { margin-top: 0; font-size: 14px; }
+          .site-shell .brunch-grid { gap: 12px; padding-right: 5px; padding-bottom: 5px; }
+          .site-shell .brunch-card { padding: 12px 16px; gap: 4px; box-shadow: 4px 4px 0 #111; border-radius: 22px; }
+          .site-shell .card-top h4 { font-size: 16px; line-height: 1.15; max-width: none; }
+          .site-shell .card-top strong { font-size: 14px; padding: 7px 12px; }
+          .site-shell .brunch-card li { padding: 2px 0; font-size: 14px; }
+          .site-shell .menu-notes { margin-top: 14px; font-size: 13px; gap: 6px; flex-direction: column; align-items: flex-start; }
+
+          /* Boissons : titre + 1re carte sur le 1er écran, puis un écran par carte */
+          .site-shell main > section.drinks {
+            display: block;
+            min-height: 0;
+          }
+          .site-shell .drinks .section-heading { margin-bottom: 14px; }
+          .site-shell .drinks .section-heading h2 { font-size: 26px !important; }
+          .site-shell .drinks-grid { display: block; }
+          .site-shell .drinks .screen { gap: 16px; }
+          .site-shell main > section.drinks { padding: 0 20px; }
+          .site-shell .drinks .drink-list { padding: 16px 20px; margin: 0; }
+          .site-shell .drinks .drink-list h3 { font-size: 18px; margin-bottom: 6px; }
+          .site-shell .drinks .price-row { padding: 3px 0; font-size: 14px; }
+
+          /* Infos : écran 1 = réseaux + privatisation, écran 2 = venir chez Beng */
+          .site-shell .info-split { display: block; min-height: 0; }
+          .site-shell .social-panel,
+          .site-shell .visit-panel {
+            min-height: calc(100svh - 104px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
+            border: 0;
+          }
+          .site-shell .social-panel { align-items: flex-start; gap: 18px; }
+          .site-shell .visit-panel { border-top: var(--line); margin: 0 -20px; padding: 20px; }
+          .site-shell .social-panel h2,
+          .site-shell .visit-panel h2 { font-size: 26px !important; }
+          .site-shell .visit-body { display: block; }
+          .site-shell .info-details { gap: 14px; }
+          .site-shell .info-details article { padding-top: 10px; }
+          .site-shell .info-details h3 { font-size: 15px; margin-bottom: 6px; }
+          .site-shell .info-details article:first-child p { padding: 4px 0; font-size: 14px; }
+          .site-shell .map-embed { margin-top: 14px; min-height: 200px; height: 200px; }
+          .site-shell .map-embed iframe { min-height: 200px; height: 200px; }
+        }
       `}</style>
       <header className="header">
         <a href="#top" className="logo" aria-label="Beng Café, accueil">
@@ -1419,27 +1483,37 @@ function App() {
           id="boissons"
           style={{ backgroundImage: `url(${drinksImage})` }}
         >
-          <div className="section-heading">
-            <p className="eyebrow">{t.drinksKicker}</p>
-            <h2>{t.drinksTitle}</h2>
-          </div>
           <div className="drinks-grid">
-            {t.drinkGroups.map(([group, drinks], index) => (
-              <article className={`drink-list drink-${index + 1}`} key={group as string}>
-                <h3>{group as string}</h3>
-                {(drinks as string[][]).map(([name, price]) => (
-                  <div className="price-row" key={name}>
-                    <span>{name}</span>
-                    <i />
-                    <strong>{price}</strong>
+            {[t.drinkGroups.slice(0, 1), t.drinkGroups.slice(1)].map((groups, screenIndex) => (
+              <div className="screen" key={screenIndex}>
+                {screenIndex === 0 && (
+                  <div className="section-heading">
+                    <p className="eyebrow">{t.drinksKicker}</p>
+                    <h2>{t.drinksTitle}</h2>
                   </div>
-                ))}
-              </article>
+                )}
+                {groups.map(([group, drinks]) => {
+                  const index = t.drinkGroups.findIndex((g) => g[0] === group);
+                  return (
+                    <article className={`drink-list drink-${index + 1}`} key={group as string}>
+                      <h3>{group as string}</h3>
+                      {(drinks as string[][]).map(([name, price]) => (
+                        <div className="price-row" key={name}>
+                          <span>{name}</span>
+                          <i />
+                          <strong>{price}</strong>
+                        </div>
+                      ))}
+                    </article>
+                  );
+                })}
+              </div>
             ))}
           </div>
         </section>
 
         <section className="menus section-pad" id="menus">
+          <div className="screen">
           <div className="section-heading centered">
             <p className="eyebrow">{t.menusKicker}</p>
             <h2>{t.menusTitle}</h2>
@@ -1473,6 +1547,8 @@ function App() {
               </article>
             ))}
           </div>
+          </div>
+          <div className="screen">
           <div className="brunch-head">
             <div>
               <span className="mini-label">02</span>
@@ -1506,6 +1582,7 @@ function App() {
               <span>→</span>
               {t.counter}
             </p>
+          </div>
           </div>
         </section>
 
