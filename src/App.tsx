@@ -574,56 +574,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Téléphone / tablette : mêmes rubriques « empilées » que sur ordinateur. En descendant, chaque
-    // rubrique reste en place (par son bas si elle est plus haute que l'écran) et la suivante la
-    // recouvre ; en remontant, le défilement est normal. Sans accroche ni défilement automatique.
-    const desktop = window.matchMedia("(min-width: 901px) and (pointer: fine)");
-    const root = document.documentElement;
-    let down = true;
-    let last = window.scrollY;
-    let acc = 0;
-
-    const apply = () => {
-      const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
-      if (desktop.matches) {
-        sections.forEach((section) => section.style.removeProperty("--stick"));
-        return;
-      }
-      const header =
-        document.querySelector<HTMLElement>(".header")?.getBoundingClientRect().height ?? 104;
-      sections.forEach((section) => {
-        const top = Math.min(header, window.innerHeight - section.offsetHeight);
-        section.style.setProperty("--stick", `${Math.round(top)}px`);
-      });
-      root.classList.toggle("stack-down", down);
-    };
-    const onScroll = () => {
-      if (desktop.matches) return;
-      const max = root.scrollHeight - window.innerHeight;
-      const y = window.scrollY;
-      if (y < 0 || y > max) return;
-      const delta = y - last;
-      last = y;
-      if (y <= 1) down = true;
-      if (!delta) return;
-      acc = Math.sign(acc) === Math.sign(delta) ? acc + delta : delta;
-      if (acc > 8 && !down) {
-        down = true;
-        root.classList.add("stack-down");
-      } else if (acc < -8 && down) {
-        down = false;
-        root.classList.remove("stack-down");
-      }
-    };
-    apply();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", apply);
-    window.addEventListener("orientationchange", apply);
-    const late = window.setTimeout(apply, 600);
+    // Téléphone / tablette : rubriques toujours empilées (fixes), défilement naturel au doigt.
+    // Le CSS fait tout ; on ne mesure que la hauteur de chaque rubrique (variable --h) pour que
+    // les rubriques plus hautes que l'écran restent accrochées par leur bas.
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
+    const measure = () =>
+      sections.forEach((section) =>
+        section.style.setProperty("--h", `${section.offsetHeight}px`),
+      );
+    measure();
+    const observer =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    sections.forEach((section) => observer?.observe(section));
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    window.addEventListener("load", measure);
+    const late = window.setTimeout(measure, 800);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", apply);
-      window.removeEventListener("orientationchange", apply);
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+      window.removeEventListener("load", measure);
       window.clearTimeout(late);
     };
   }, []);
@@ -1423,6 +1394,14 @@ function App() {
           .site-shell .info-details article:first-child p { padding: 4px 0; font-size: 14px; }
           .site-shell .map-embed { margin-top: 14px; min-height: 200px; height: 200px; }
           .site-shell .map-embed iframe { min-height: 200px; height: 200px; }
+        }
+        /* Téléphone / tablette : toutes les rubriques sont fixes (empilées) pendant le défilement naturel,
+           vers le bas comme vers le haut ; une rubrique plus haute que l'écran reste accrochée par son bas */
+        @media (max-width: 900px) {
+          .site-shell main > section {
+            position: sticky !important;
+            top: min(104px, calc(100svh - var(--h, 0px))) !important;
+          }
         }
       `}</style>
       <header className="header">
