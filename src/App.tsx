@@ -925,7 +925,7 @@ function App() {
           gap: 12px;
         }
         .site-shell .header .logo-mark {
-          height: 54px;
+          height: 48px;
           width: auto;
           display: block;
         }
@@ -980,6 +980,26 @@ function App() {
         }
         .site-shell .visit-panel .info-details article:first-child p:last-child {
           border-bottom: 0;
+        }
+        .site-shell .private-block {
+          margin-top: clamp(14px, 4vh, 40px);
+          padding-top: clamp(18px, 4vh, 40px);
+          border-top: var(--line);
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .site-shell .private-block .eyebrow {
+          margin: 0;
+        }
+        .site-shell .private-text {
+          margin: 0;
+          font-size: clamp(18px, 1.7vw, 24px);
+          line-height: 1.3;
+          font-weight: 600;
+          max-width: 440px;
         }
         .site-shell .visit-body {
           display: grid;
@@ -1292,17 +1312,6 @@ function App() {
           </div>
         </section>
 
-        <section className="private-strip section-pad">
-          <div>
-            <p className="eyebrow">{t.privatize}</p>
-            <h2>{t.privateText}</h2>
-          </div>
-          <button className="button button-light" onClick={openModal}>
-            {t.write}
-            <Arrow />
-          </button>
-        </section>
-
         <section className="info section-pad" id="infos">
           <div className="info-split">
             <div className="social-panel">
@@ -1317,6 +1326,14 @@ function App() {
                 {t.instagram}
                 <Arrow diagonal />
               </a>
+              <div className="private-block">
+                <p className="eyebrow">{t.privatize}</p>
+                <p className="private-text">{t.privateText}</p>
+                <button className="button button-dark" onClick={openModal}>
+                  {t.write}
+                  <Arrow />
+                </button>
+              </div>
             </div>
             <div className="visit-panel">
               <p className="eyebrow">{t.infoKicker}</p>
