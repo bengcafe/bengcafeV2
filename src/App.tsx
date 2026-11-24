@@ -3,6 +3,12 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 type Language = "fr" | "en";
 
 const giftUrl = "https://buy.stripe.com/4gM28tcvr6OZ36s4YU38400";
+const mapsKey = import.meta.env.VITE_GOOGLE_MAPS_KEY as string | undefined;
+const mapQuery = "Beng Café, 24 rue du Frout, 29000 Quimper";
+// Avec une clé (VITE_GOOGLE_MAPS_KEY) : API Maps Embed ; sans clé : intégration Google Maps classique.
+const mapEmbedUrl = mapsKey
+  ? `https://www.google.com/maps/embed/v1/place?key=${mapsKey}&q=${encodeURIComponent(mapQuery)}`
+  : `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`;
 const mapUrl = "https://maps.app.goo.gl/H43fJDd2D6WoG4i27";
 // Vidéo du hero : déposez le fichier dans le dossier public/ (hero.mp4)
 const heroVideo = "/hero.mp4";
@@ -127,7 +133,7 @@ const copy = {
     route: "Itinéraire",
     days: ["Mardi", "Mercredi — samedi", "Dimanche — lundi"],
     times: ["11h — 18h", "10h — 18h", "Fermé"],
-    mapLabel: "Plan stylisé du centre de Quimper",
+    mapLabel: "Carte Google Maps : Beng Café, Quimper",
     footer: "Beng Café · Fait maison à Quimper",
     legal: "© 2026 — Tous droits réservés",
     modalTitle: "Parlez-nous de votre événement",
@@ -264,7 +270,7 @@ const copy = {
     route: "Directions",
     days: ["Tuesday", "Wednesday — Saturday", "Sunday — Monday"],
     times: ["11 am — 6 pm", "10 am — 6 pm", "Closed"],
-    mapLabel: "Stylised map of central Quimper",
+    mapLabel: "Google Maps: Beng Café, Quimper",
     footer: "Beng Café · Homemade in Quimper",
     legal: "© 2026 — All rights reserved",
     modalTitle: "Tell us about your event",
@@ -925,7 +931,31 @@ function App() {
         .site-shell .visit-panel .info-details {
           gap: 2.4vh 32px;
         }
+        .site-shell .visit-body {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 32px;
+          align-items: stretch;
+        }
+        .site-shell .visit-body .info-details {
+          grid-template-columns: 1fr;
+        }
+        .site-shell .map-embed {
+          border: var(--line);
+          border-radius: 24px;
+          overflow: hidden;
+          min-height: 320px;
+          background: var(--green);
+        }
+        .site-shell .map-embed iframe {
+          display: block;
+          width: 100%;
+          height: 100%;
+          min-height: 320px;
+          border: 0;
+        }
         @media (max-width: 900px) {
+          .site-shell .visit-body { grid-template-columns: 1fr; }
           .site-shell .info-split {
             grid-template-columns: 1fr;
             gap: 44px;
@@ -1241,6 +1271,7 @@ function App() {
             <div className="visit-panel">
               <p className="eyebrow">{t.infoKicker}</p>
               <h2>{t.infoTitle}</h2>
+              <div className="visit-body">
               <div className="info-details">
                 <article>
                   <h3>{t.hours}</h3>
@@ -1268,6 +1299,16 @@ function App() {
                   <a href="tel:+33256041281">02 56 04 12 81</a>
                   <a href="mailto:contact@bengcafe.fr">contact@bengcafe.fr</a>
                 </article>
+              </div>
+              <div className="map-embed">
+                <iframe
+                  title={t.mapLabel}
+                  src={mapEmbedUrl}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
               </div>
             </div>
           </div>
