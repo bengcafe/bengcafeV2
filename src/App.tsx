@@ -420,6 +420,9 @@ function App() {
       const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
       if (!sections.length) return false;
       setStack(direction > 0);
+      // Si toutes les rubriques tiennent dans l'écran, on ne défile jamais « à moitié » :
+      // on rejoint toujours le bord de la rubrique (y compris depuis le pied de page)
+      const fits = canStack();
       const header = headerHeight();
       let current = 0;
       sections.forEach((section, index) => {
@@ -430,7 +433,7 @@ function App() {
       if (direction > 0) {
         const remaining = rect.bottom - window.innerHeight;
         if (remaining > 2) {
-          if (distance < remaining) return false;
+          if (!fits && distance < remaining) return false;
           lock(animateTo(window.scrollY + remaining) + 80);
           return true;
         }
@@ -445,7 +448,7 @@ function App() {
 
       const above = header - rect.top;
       if (above > 2) {
-        if (distance < above) return false;
+        if (!fits && distance < above) return false;
         lock(animateTo(window.scrollY - above) + 80);
         return true;
       }
