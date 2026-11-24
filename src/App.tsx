@@ -15,7 +15,7 @@ const formEndpoint = (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) 
 
 const copy = {
   fr: {
-    nav: ["Le lieu", "Menus", "Boissons", "Infos"],
+    nav: ["Le lieu", "Boissons", "Menus", "Infos"],
     gift: "Offrir un bon cadeau",
     heroEyebrow: "Coffee shop indépendant · Quimper",
     hero: "Café de spécialité\nDéjeuner en semaine\nBrunch le samedi",
@@ -153,7 +153,7 @@ const copy = {
     close: "Fermer",
   },
   en: {
-    nav: ["The café", "Menus", "Drinks", "Info"],
+    nav: ["The café", "Drinks", "Menus", "Info"],
     gift: "Give a gift card",
     heroEyebrow: "Independent coffee shop · Quimper",
     hero: "Specialty coffee\nWeekday lunch\nSaturday brunch",
@@ -920,6 +920,20 @@ function App() {
           position: sticky;
           top: 70px;
         }
+        /* Cartes de boissons : verre dépoli translucide, la photo reste visible derrière */
+        .site-shell .drinks .drink-list {
+          -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+        }
+        .site-shell .drinks .drink-1 {
+          background: color-mix(in srgb, var(--yellow) 68%, transparent);
+        }
+        .site-shell .drinks .drink-2 {
+          background: color-mix(in srgb, var(--blue) 68%, transparent);
+        }
+        .site-shell .drinks .drink-3 {
+          background: color-mix(in srgb, var(--green) 68%, transparent);
+        }
         /* Badge Ouvert / Fermé dans le bandeau blanc du header */
         .site-shell .header-status {
           padding: 7px 12px;
@@ -974,7 +988,7 @@ function App() {
         </a>
         <nav className="nav" aria-label="Navigation principale">
           {t.nav.map((item, index) => (
-            <a key={item} href={["#lieu", "#menus", "#boissons", "#infos"][index]}>
+            <a key={item} href={["#lieu", "#boissons", "#menus", "#infos"][index]}>
               {item}
             </a>
           ))}
@@ -1075,6 +1089,31 @@ function App() {
           </div>
         </section>
 
+        <section
+          className="drinks section-pad"
+          id="boissons"
+          style={{ backgroundImage: `url(${drinksImage})` }}
+        >
+          <div className="section-heading">
+            <p className="eyebrow">{t.drinksKicker}</p>
+            <h2>{t.drinksTitle}</h2>
+          </div>
+          <div className="drinks-grid">
+            {t.drinkGroups.map(([group, drinks], index) => (
+              <article className={`drink-list drink-${index + 1}`} key={group as string}>
+                <h3>{group as string}</h3>
+                {(drinks as string[][]).map(([name, price]) => (
+                  <div className="price-row" key={name}>
+                    <span>{name}</span>
+                    <i />
+                    <strong>{price}</strong>
+                  </div>
+                ))}
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="menus section-pad" id="menus">
           <div className="section-heading centered">
             <p className="eyebrow">{t.menusKicker}</p>
@@ -1127,31 +1166,6 @@ function App() {
               <span>→</span>
               {t.counter}
             </p>
-          </div>
-        </section>
-
-        <section
-          className="drinks section-pad"
-          id="boissons"
-          style={{ backgroundImage: `url(${drinksImage})` }}
-        >
-          <div className="section-heading">
-            <p className="eyebrow">{t.drinksKicker}</p>
-            <h2>{t.drinksTitle}</h2>
-          </div>
-          <div className="drinks-grid">
-            {t.drinkGroups.map(([group, drinks], index) => (
-              <article className={`drink-list drink-${index + 1}`} key={group as string}>
-                <h3>{group as string}</h3>
-                {(drinks as string[][]).map(([name, price]) => (
-                  <div className="price-row" key={name}>
-                    <span>{name}</span>
-                    <i />
-                    <strong>{price}</strong>
-                  </div>
-                ))}
-              </article>
-            ))}
           </div>
         </section>
 
