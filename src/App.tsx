@@ -707,8 +707,8 @@ function App() {
             linear-gradient(180deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0) clamp(70px, 14vh, 140px)),
             linear-gradient(
               270deg,
-              rgba(0, 0, 0, 0.6) 0%,
-              rgba(0, 0, 0, 0.38) 38%,
+              rgba(0, 0, 0, 0.36) 0%,
+              rgba(0, 0, 0, 0.2) 38%,
               rgba(0, 0, 0, 0) 68%
             );
         }
